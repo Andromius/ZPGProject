@@ -1,9 +1,10 @@
 #pragma once
 #include "Shader.h"
+#include <string>
 class FragmentShader : 
 	public Shader
 {
 public:
-	FragmentShader(const char* shader);
+	FragmentShader(std::string fileName);
 };
 

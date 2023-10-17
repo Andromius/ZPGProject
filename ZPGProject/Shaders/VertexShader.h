@@ -1,9 +1,11 @@
 #pragma once
 #include "Shader.h"
+#include <string>
+
 class VertexShader :
 	public Shader
 {
 public:
-	VertexShader(const char* shaderSource);
+	VertexShader(std::string fileName);
 };
 

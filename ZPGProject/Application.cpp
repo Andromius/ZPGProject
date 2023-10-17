@@ -85,16 +85,11 @@ void Application::initialize()
 
 void Application::createShaders()
 {
-	std::string vertexShader = ShaderImporter::readFile("vertexShader.vert");
-	std::cout << vertexShader << std::endl;
-	std::string fragmentShader = ShaderImporter::readFile("fragmentShader.frag");
-	std::cout << fragmentShader << std::endl;
-
 	//create and compile shaders
 	std::vector<std::shared_ptr<Shader>> shaders
 	{
-		std::make_shared<VertexShader>(vertexShader.c_str()),
-		std::make_shared<FragmentShader>(fragmentShader.c_str())
+		std::make_shared<VertexShader>("vertexShader"),
+		std::make_shared<FragmentShader>("fragmentShader")
 	};
 	_shaderPrograms.push_back(std::make_shared<ShaderProgram>(_camera));
 	_shaderPrograms[0]->attachShaders(shaders);
@@ -102,8 +97,8 @@ void Application::createShaders()
 
 	std::vector<std::shared_ptr<Shader>> shaders2
 	{
-		std::make_shared<VertexShader>(vertexShader.c_str()),
-		std::make_shared<FragmentShader>(fragment_shader2)
+		std::make_shared<VertexShader>("vertexShader"),
+		std::make_shared<FragmentShader>("fragmentShaderSolid")
 	};
 	_shaderPrograms.push_back(std::make_shared<ShaderProgram>(_camera));
 	_shaderPrograms[1]->attachShaders(shaders2);

@@ -1,8 +1,9 @@
 #include "FragmentShader.h"
+#include "ShaderImporter.h"
 
-FragmentShader::FragmentShader(const char* shaderSource)
+FragmentShader::FragmentShader(std::string fileName)
 {
 	shader = glCreateShader(GL_FRAGMENT_SHADER);
-	this->setSource(shaderSource);
-	this->compile();
+	setSource(ShaderImporter::readFile(fileName + ".frag").c_str());
+	compile();
 }
