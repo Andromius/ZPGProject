@@ -1,23 +1,22 @@
 #pragma once
-#include <list>
+#include <vector>
 #include "EventHandlers.h"
 #include <algorithm>
+#include <memory>
 
 class EventNotifier
 {
-private:
-	static EventNotifier* _instance;
-	
-	std::list<ErrorEventHandler*> _errorSubscribers;
-	std::list<WindowFocusChangedEventHandler*> _windowFocusChangedSubscribers;
-	std::list<WindowIconifyChangedEventHandler*> _windowIconifyChangedSubscribers;
-	std::list<WindowSizeChangedEventHandler*> _windowSizeChangedSubscribers;
-	std::list<MouseButtonEventHandler*> _mouseButtonSubscribers;
-	std::list<CursorPosChangedEventHandler*> _cursorPosChangedSubscribers;
-	std::list<KeyEventHandler*> _keySubscribers;
+private:	
+	std::vector<ErrorEventHandler*> _errorSubscribers;
+	std::vector<WindowFocusChangedEventHandler*> _windowFocusChangedSubscribers;
+	std::vector<WindowIconifyChangedEventHandler*> _windowIconifyChangedSubscribers;
+	std::vector<WindowSizeChangedEventHandler*> _windowSizeChangedSubscribers;
+	std::vector<MouseButtonEventHandler*> _mouseButtonSubscribers;
+	std::vector<CursorPosChangedEventHandler*> _cursorPosChangedSubscribers;
+	std::vector<KeyEventHandler*> _keySubscribers;
 
 public:
-	static EventNotifier* GetInstance();
+	static EventNotifier& getInstance();
 	EventNotifier();
 
 #pragma region Notifications

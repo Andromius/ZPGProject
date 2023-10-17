@@ -11,10 +11,10 @@ void Window::setHints()
 
 void Window::initializeEvents()
 {
-	EventNotifier::GetInstance()->subscribeWindowSizeChanged(this);
-	EventNotifier::GetInstance()->subscribeWindowIconifyChanged(this);
-	EventNotifier::GetInstance()->subscribeWindowFocusChanged(this);
-	EventNotifier::GetInstance()->subscribeKey(this);
+	EventNotifier::getInstance().subscribeWindowSizeChanged(this);
+	EventNotifier::getInstance().subscribeWindowIconifyChanged(this);
+	EventNotifier::getInstance().subscribeWindowFocusChanged(this);
+	EventNotifier::getInstance().subscribeKey(this);
 
 	glfwSetWindowSizeCallback(window, EventNotifier::notifyWindowSizeChanged);
 	glfwSetWindowIconifyCallback(window, EventNotifier::notifyWindowIconifyChanged);
@@ -72,8 +72,8 @@ void Window::onKey(GLFWwindow* window, int key, int scancode, int action, int mo
 
 void Window::unsubscribe()
 {
-	EventNotifier::GetInstance()->unsubscribeWindowSizeChanged(this);
-	EventNotifier::GetInstance()->unsubscribeWindowIconifyChanged(this);
-	EventNotifier::GetInstance()->unsubscribeWindowFocusChanged(this);
-	EventNotifier::GetInstance()->unsubscribeKey(this);
+	EventNotifier::getInstance().unsubscribeWindowSizeChanged(this);
+	EventNotifier::getInstance().unsubscribeWindowIconifyChanged(this);
+	EventNotifier::getInstance().unsubscribeWindowFocusChanged(this);
+	EventNotifier::getInstance().unsubscribeKey(this);
 }

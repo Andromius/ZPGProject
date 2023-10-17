@@ -1,11 +1,12 @@
 #pragma once
-#include <list>
+#include <memory>
+#include <vector>
 
 template <typename TEventHandler>
 class ObservableObject
 {
 protected:
-	std::list<TEventHandler*> _subscribers;
+	std::vector<TEventHandler*> _subscribers;
 	virtual void notify() = 0;
 
 public:
@@ -22,5 +23,5 @@ inline void ObservableObject<TEventHandler>::subscribe(TEventHandler* handler)
 template<typename TEventHandler>
 inline void ObservableObject<TEventHandler>::unsubscribe(TEventHandler* handler)
 {
-	_subscribers.remove(handler);
+	_subscribers.erase(std::remove_if(_subscribers.begin(), _subscribers.end(), [&](TEventHandler* h) { return h == handler; }));
 }

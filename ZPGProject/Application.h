@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <memory>
 #include "Scene.h"
 #include "Window.h"
 #include "Camera.h"
@@ -19,17 +20,13 @@
 class Application : public ErrorEventHandler
 {
 private:
-	static Application* _instance;
-
-	Window* _window;
-	Scene* _scene;
-	Camera* _camera;
-	std::vector<ShaderProgram*> _shaderPrograms;
-
-	void Unsubscribe();
+	std::shared_ptr<Window> _window;
+	std::shared_ptr<Scene> _scene;
+	std::shared_ptr<Camera> _camera;
+	std::vector<std::shared_ptr<ShaderProgram>> _shaderPrograms;
 
 public:
-	static Application* getInstance();
+	static Application& getInstance();
 	~Application();
 	void initialize();
 	void createShaders();

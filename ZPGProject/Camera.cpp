@@ -12,16 +12,16 @@ Camera::Camera(glm::vec3 eye, glm::vec3 target, glm::vec3 up, float fov, float w
 	_pitch = -90.f;
 	_yaw = -90.f;
 	_sens = sens;
-	EventNotifier::GetInstance()->subscribeWindowSizeChanged(this);
-	EventNotifier::GetInstance()->subscribeKey(this);
-	EventNotifier::GetInstance()->subscribeCursorPosChanged(this);
+	EventNotifier::getInstance().subscribeWindowSizeChanged(this);
+	EventNotifier::getInstance().subscribeKey(this);
+	EventNotifier::getInstance().subscribeCursorPosChanged(this);
 }
 
 Camera::~Camera()
 {
-	EventNotifier::GetInstance()->unsubscribeWindowSizeChanged(this);
-	EventNotifier::GetInstance()->unsubscribeKey(this);
-	EventNotifier::GetInstance()->unsubscribeCursorPosChanged(this);
+	EventNotifier::getInstance().unsubscribeWindowSizeChanged(this);
+	EventNotifier::getInstance().unsubscribeKey(this);
+	EventNotifier::getInstance().unsubscribeCursorPosChanged(this);
 }
 
 glm::mat4 Camera::getCamera()
@@ -31,7 +31,7 @@ glm::mat4 Camera::getCamera()
 
 glm::mat4 Camera::getPerspective()
 {
-	return glm::perspective(_fov, _aspectRatio, 0.1f, 100.0f);
+	return glm::perspective(glm::radians(_fov), _aspectRatio, 0.1f, 100.0f);
 }
 
 void Camera::onWindowSizeChanged(GLFWwindow* window, int width, int height)

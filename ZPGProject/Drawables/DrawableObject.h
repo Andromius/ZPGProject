@@ -7,12 +7,12 @@
 class DrawableObject
 {
 private:
-	Mesh* _mesh;
-	CompositeTransform* _transform;
-	ShaderProgram* _program;
+	std::shared_ptr<Mesh> _mesh;
+	std::unique_ptr<CompositeTransform> _transform;
+	std::shared_ptr<ShaderProgram> _program;
 public:
-	DrawableObject(Mesh* _mesh, ShaderProgram* _program);
-	DrawableObject* addTransform(Transform* transform);
+	DrawableObject(std::shared_ptr<Mesh> _mesh, std::shared_ptr<ShaderProgram> _program);
+	DrawableObject& addTransform(std::shared_ptr<Transform> transform);
 	void draw();
 };
 

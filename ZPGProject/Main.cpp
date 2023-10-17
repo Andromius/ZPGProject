@@ -4,13 +4,11 @@
 
 int main(void)
 {
-	Application* app = Application::getInstance();
-	app->initialize();
-	app->createShaders();
-	app->createModels();
-	app->run();
+	Application& app = Application::getInstance();
+	app.initialize();
+	app.createShaders();
+	app.createModels();
+	app.run();
 
-	delete app;
-	delete EventNotifier::GetInstance();
 	exit(EXIT_SUCCESS);
 }

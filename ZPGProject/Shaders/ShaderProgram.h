@@ -7,6 +7,7 @@
 #include "Events/EventHandlers.h"
 #include "Events/EventNotifier.h"
 #include "Camera.h"
+#include <memory>
 
 class ShaderProgram :
 	public CameraChangedEventHandler
@@ -15,12 +16,12 @@ private:
 	GLuint _program;
 	glm::mat4 _projectionMatrix;
 	glm::mat4 _viewMatrix;
-	Camera* _camera;
+	std::shared_ptr<Camera> _camera;
 
 public:
-	ShaderProgram(Camera* camera);
+	ShaderProgram(std::shared_ptr<Camera> camera);
 	~ShaderProgram();
-	void attachShaders(std::vector<Shader*> shaders);
+	void attachShaders(const std::vector<std::shared_ptr<Shader>>& shaders);
 	void link();
 	void useProgram();
 	void checkStatus();

@@ -1,6 +1,6 @@
 #include "ShaderProgram.h"
 
-ShaderProgram::ShaderProgram(Camera* camera)
+ShaderProgram::ShaderProgram(std::shared_ptr<Camera> camera)
 {
 	_program = glCreateProgram();
 	_camera = camera;
@@ -14,9 +14,9 @@ ShaderProgram::~ShaderProgram()
 	_camera->unsubscribe(this);
 }
 
-void ShaderProgram::attachShaders(std::vector<Shader*> shaders)
+void ShaderProgram::attachShaders(const std::vector<std::shared_ptr<Shader>>& shaders)
 {
-	for (Shader* shader : shaders)
+	for (auto& shader : shaders)
 	{
 		glAttachShader(_program, shader->get());
 	}

@@ -1,27 +1,26 @@
 #include "EventNotifier.h"
 
-EventNotifier* EventNotifier::_instance = new EventNotifier();
-
-EventNotifier* EventNotifier::GetInstance()
+EventNotifier& EventNotifier::getInstance()
 {
-	return _instance;
+	static EventNotifier instance = EventNotifier();
+	return instance;
 }
 
 EventNotifier::EventNotifier()
 {
-	_errorSubscribers = std::list<ErrorEventHandler*>();
-	_windowFocusChangedSubscribers = std::list<WindowFocusChangedEventHandler*>();
-	_windowIconifyChangedSubscribers = std::list<WindowIconifyChangedEventHandler*>();
-	_windowSizeChangedSubscribers = std::list<WindowSizeChangedEventHandler*>();
-	_mouseButtonSubscribers = std::list<MouseButtonEventHandler*>();
-	_cursorPosChangedSubscribers = std::list<CursorPosChangedEventHandler*>();
-	_keySubscribers = std::list<KeyEventHandler*>();
+	_errorSubscribers = std::vector<ErrorEventHandler*>();
+	_windowFocusChangedSubscribers = std::vector<WindowFocusChangedEventHandler*>();
+	_windowIconifyChangedSubscribers = std::vector<WindowIconifyChangedEventHandler*>();
+	_windowSizeChangedSubscribers = std::vector<WindowSizeChangedEventHandler*>();
+	_mouseButtonSubscribers = std::vector<MouseButtonEventHandler*>();
+	_cursorPosChangedSubscribers = std::vector<CursorPosChangedEventHandler*>();
+	_keySubscribers = std::vector<KeyEventHandler*>();
 }
 
 #pragma region Notifications
 void EventNotifier::notifyError(int error, const char* description)
 {
-	for (auto handler : GetInstance()->_errorSubscribers)
+	for (auto& handler : getInstance()._errorSubscribers)
 	{
 		handler->onError(error, description);
 	}
@@ -29,7 +28,7 @@ void EventNotifier::notifyError(int error, const char* description)
 
 void EventNotifier::notifyWindowFocusChanged(GLFWwindow* window, int focused)
 {
-	for (auto handler : GetInstance()->_windowFocusChangedSubscribers)
+	for (auto& handler : getInstance()._windowFocusChangedSubscribers)
 	{
 		handler->onWindowFocusChanged(window, focused);
 	}
@@ -37,7 +36,7 @@ void EventNotifier::notifyWindowFocusChanged(GLFWwindow* window, int focused)
 
 void EventNotifier::notifyWindowIconifyChanged(GLFWwindow* window, int iconified)
 {
-	for (auto handler : GetInstance()->_windowIconifyChangedSubscribers)
+	for (auto& handler : getInstance()._windowIconifyChangedSubscribers)
 	{
 		handler->onWindowIconifyChanged(window, iconified);
 	}
@@ -45,7 +44,7 @@ void EventNotifier::notifyWindowIconifyChanged(GLFWwindow* window, int iconified
 
 void EventNotifier::notifyWindowSizeChanged(GLFWwindow* window, int width, int height)
 {
-	for (auto handler : GetInstance()->_windowSizeChangedSubscribers)
+	for (auto& handler : getInstance()._windowSizeChangedSubscribers)
 	{
 		handler->onWindowSizeChanged(window, width, height);
 	}
@@ -53,7 +52,7 @@ void EventNotifier::notifyWindowSizeChanged(GLFWwindow* window, int width, int h
 
 void EventNotifier::notifyMouseButton(GLFWwindow* window, int button, int action, int mode)
 {
-	for (auto handler : GetInstance()->_mouseButtonSubscribers)
+	for (auto& handler : getInstance()._mouseButtonSubscribers)
 	{
 		handler->onMouseButton(window, button, action, mode);
 	}
@@ -61,7 +60,7 @@ void EventNotifier::notifyMouseButton(GLFWwindow* window, int button, int action
 
 void EventNotifier::notifyCursorPosChanged(GLFWwindow* window, double x, double y)
 {
-	for (auto handler : GetInstance()->_cursorPosChangedSubscribers)
+	for (auto& handler : getInstance()._cursorPosChangedSubscribers)
 	{
 		handler->onCursorPosChanged(window, x, y);
 	}
@@ -69,7 +68,7 @@ void EventNotifier::notifyCursorPosChanged(GLFWwindow* window, double x, double 
 
 void EventNotifier::notifyKey(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	for (auto handler : GetInstance()->_keySubscribers)
+	for (auto& handler : getInstance()._keySubscribers)
 	{
 		handler->onKey(window, key, scancode, action, mods);
 	}
@@ -116,36 +115,36 @@ void EventNotifier::subscribeKey(KeyEventHandler* handler)
 #pragma region Unsubscriptions
 void EventNotifier::unsubscribeError(ErrorEventHandler* handler)
 {
-	_errorSubscribers.remove(handler);
+	_errorSubscribers.erase(std::remove_if(_errorSubscribers.begin(), _errorSubscribers.end(), [&](ErrorEventHandler* h) { return h == handler; }));
 }
 
 void EventNotifier::unsubscribeWindowFocusChanged(WindowFocusChangedEventHandler* handler)
 {
-	_windowFocusChangedSubscribers.remove(handler);
+	_windowFocusChangedSubscribers.erase(std::remove_if(_windowFocusChangedSubscribers.begin(), _windowFocusChangedSubscribers.end(), [&](WindowFocusChangedEventHandler* h) { return h == handler; }));
 }
 
 void EventNotifier::unsubscribeWindowIconifyChanged(WindowIconifyChangedEventHandler* handler)
 {
-	_windowIconifyChangedSubscribers.remove(handler);
+	_windowIconifyChangedSubscribers.erase(std::remove_if(_windowIconifyChangedSubscribers.begin(), _windowIconifyChangedSubscribers.end(), [&](WindowIconifyChangedEventHandler* h) { return h == handler; }));
 }
 
 void EventNotifier::unsubscribeWindowSizeChanged(WindowSizeChangedEventHandler* handler)
 {
-	_windowSizeChangedSubscribers.remove(handler);
+	_windowSizeChangedSubscribers.erase(std::remove_if(_windowSizeChangedSubscribers.begin(), _windowSizeChangedSubscribers.end(), [&](WindowSizeChangedEventHandler* h) { return h == handler; }));
 }
 
 void EventNotifier::unsubscribeMouseButton(MouseButtonEventHandler* handler)
 {
-	_mouseButtonSubscribers.remove(handler);
+	_mouseButtonSubscribers.erase(std::remove_if(_mouseButtonSubscribers.begin(), _mouseButtonSubscribers.end(), [&](MouseButtonEventHandler* h) { return h == handler; }));
 }
 
 void EventNotifier::unsubscribeCursorPosChanged(CursorPosChangedEventHandler* handler)
 {
-	_cursorPosChangedSubscribers.remove(handler);
+	_cursorPosChangedSubscribers.erase(std::remove_if(_cursorPosChangedSubscribers.begin(), _cursorPosChangedSubscribers.end(), [&](CursorPosChangedEventHandler* h) { return h == handler; }));
 }
 
 void EventNotifier::unsubscribeKey(KeyEventHandler* handler)
 {
-	_keySubscribers.remove(handler);
+	_keySubscribers.erase(std::remove_if(_keySubscribers.begin(), _keySubscribers.end(), [&](KeyEventHandler* h) { return h == handler; }));
 }
 #pragma endregion
