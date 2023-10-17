@@ -4,7 +4,7 @@
 #include "Events/EventHandlers.h"
 #include "Events/EventNotifier.h"
 
-class Window : 
+class Window :
 	public WindowSizeChangedEventHandler,
 	public WindowIconifyChangedEventHandler,
 	public WindowFocusChangedEventHandler,

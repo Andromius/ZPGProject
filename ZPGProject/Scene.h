@@ -7,18 +7,19 @@
 #include "Transforms/RotationTransform.h"
 #include "Transforms/ScaleTransform.h"
 
-class Scene : public KeyEventHandler
+class Scene : 
+	public KeyEventHandler
 {
 private:
 	int selectedObjectIndex = 0;
-	std::vector<DrawableObject*> objects;
+	std::vector<std::shared_ptr<DrawableObject>> objects;
 
 public:
-	Scene(std::vector<DrawableObject*> objects);
+	Scene(std::vector<std::shared_ptr<DrawableObject>> objects);
 	Scene();
 	~Scene();
 
-	void addDrawableObject(DrawableObject* objects);
+	void addDrawableObject(std::shared_ptr<DrawableObject> objects);
 	void draw();
 
 	// Inherited via KeyEventHandler

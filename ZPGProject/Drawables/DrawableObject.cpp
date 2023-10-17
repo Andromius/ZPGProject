@@ -1,16 +1,16 @@
 #include "DrawableObject.h"
 
-DrawableObject::DrawableObject(Mesh* mesh, ShaderProgram* program)
+DrawableObject::DrawableObject(std::shared_ptr<Mesh> mesh, std::shared_ptr<ShaderProgram> program)
 {
 	_mesh = mesh;
-	_transform = new CompositeTransform();
+	_transform = std::make_unique<CompositeTransform>();
 	_program = program;
 }
 
-DrawableObject* DrawableObject::addTransform(Transform* transform)
+DrawableObject& DrawableObject::addTransform(std::shared_ptr<Transform> transform)
 {
 	_transform->addTransform(transform);
-	return this;
+	return *this;
 }
 
 void DrawableObject::draw()
