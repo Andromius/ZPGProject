@@ -1,8 +1,9 @@
 #include "VertexShader.h"
+#include "ShaderImporter.h"
 
-VertexShader::VertexShader(const char* shaderSource)
+VertexShader::VertexShader(std::string fileName)
 {
 	shader = glCreateShader(GL_VERTEX_SHADER);
-	this->setSource(shaderSource);
-	this->compile();
+	setSource(ShaderImporter::readFile(fileName + ".vert").c_str());
+	compile();
 }
