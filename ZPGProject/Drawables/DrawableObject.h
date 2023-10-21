@@ -1,9 +1,9 @@
 #pragma once
 #include "Meshes/Mesh.h"
-#include "Transforms/Transform.h"
 #include "Transforms/CompositeTransform.h"
 #include "Shaders/ShaderProgram.h"
 #include <typeinfo>
+#include <memory>
 
 class DrawableObject
 {

@@ -5,7 +5,6 @@
 #include "VertexShader.h"
 #include "FragmentShader.h"
 #include "Camera.h"
-#include "Scene.h"
 #include "Events/ApplicationEventHandler.h"
 #include "Events/CameraEventHandler.h"
 #include <glm/gtc/type_ptr.hpp>

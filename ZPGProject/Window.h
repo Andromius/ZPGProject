@@ -1,6 +1,6 @@
 #pragma once
-#include "Events/WindowEventHandler.h"
 #include <stdio.h>
+#include "Events/WindowEventHandler.h"
 #include "Observables/ObservableObject.h"
 #include "Events/CursorPos.h"
 

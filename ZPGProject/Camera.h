@@ -35,5 +35,8 @@ public:
 	void onKey(GLFWwindow* window) override;
 	void onCursorPositionChanged(CursorPos cursorPos) override;
 	void onMouseButton(GLFWwindow* window) override;
+
+	// Inherited via ObservableObject
+	void notify(int message) override;
 };
 

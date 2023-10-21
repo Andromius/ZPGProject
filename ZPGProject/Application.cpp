@@ -36,6 +36,7 @@ void Application::initialize()
 	}
 
 	_window = std::make_shared<Window>(800, 600, "ZPG", nullptr, nullptr);
+	_camera = std::make_shared<Camera>(glm::vec3(0, 0, 2), glm::vec3(0, 0, -4), glm::vec3(0, 1, 0), 60.0f, 0.05f, _window);
 	_window->subscribe(this);
 
 	if (!_window->getGLFWWindow()) {
@@ -62,7 +63,6 @@ void Application::initialize()
 
 	glEnable(GL_DEPTH_TEST);
 
-	_camera = std::make_shared<Camera>(glm::vec3(0, 0, 3), glm::vec3(0, 0, -4), glm::vec3(0, 1, 0), 60.0f, 0.05f, _window);
 }
 
 void Application::createShaders()
@@ -133,7 +133,7 @@ void Application::notify(int message)
 	for (auto& subscriber : _subscribers)
 	{
 		if (message & APP_SCENE_CHANGED)
-			subscriber->onSceneChanged(*_scenes[_currentScene]);
+			subscriber->onSceneChanged(getCurrentScene());
 	}
 }
 

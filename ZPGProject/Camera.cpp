@@ -123,3 +123,18 @@ void Camera::onMouseButton(GLFWwindow* window)
 	}
 
 }
+
+void Camera::notify(int message)
+{
+	for (auto& subscriber : _subscribers)
+	{
+		if (message & CAM_POSITION_CHANGED)
+			subscriber->onCameraPositionChanged(getEye());
+		
+		if (message & CAM_PROJ_MAT_CHANGED)
+			subscriber->onCameraProjectionMatrixChanged(getPerspective());
+
+		if (message & CAM_VIEW_MAT_CHANGED)
+			subscriber->onCameraViewMatrixChanged(getCamera());
+	}
+}

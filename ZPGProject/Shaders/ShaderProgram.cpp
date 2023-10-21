@@ -1,6 +1,5 @@
 #include "ShaderProgram.h"
 #include "Application.h"
-
 ShaderProgram::ShaderProgram(std::shared_ptr<Camera> camera, VertexShader& vertexShader, FragmentShader& fragmentShader)
 {
 	_program = glCreateProgram();
