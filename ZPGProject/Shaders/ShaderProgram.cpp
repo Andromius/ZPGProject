@@ -9,9 +9,10 @@ ShaderProgram::ShaderProgram(std::shared_ptr<Camera> camera, VertexShader& verte
 	_camera->subscribe(this);
 	Application::getInstance().subscribe(this);
 	link();
+
 	onCameraPositionChanged(_camera->getEye());
-	onCameraProjectionMatrixChanged(_camera->getPerspective());
-	onCameraViewMatrixChanged(_camera->getCamera());
+	onCameraProjectionMatrixChanged(_camera->getProjectionMatrix());
+	onCameraViewMatrixChanged(_camera->getViewMatrix());
 }
 
 ShaderProgram::~ShaderProgram()

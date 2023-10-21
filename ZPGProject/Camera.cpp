@@ -23,12 +23,12 @@ Camera::~Camera()
 	_window->unsubscribe(this);
 }
 
-glm::mat4 Camera::getCamera()
+glm::mat4 Camera::getViewMatrix()
 {
 	return glm::lookAt(_eye, _target + _eye, _up);
 }
 
-glm::mat4 Camera::getPerspective()
+glm::mat4 Camera::getProjectionMatrix()
 {
 	return glm::perspective(glm::radians(_fov), _aspectRatio, 0.1f, 100.0f);
 }
@@ -132,9 +132,9 @@ void Camera::notify(int message)
 			subscriber->onCameraPositionChanged(getEye());
 		
 		if (message & CAM_PROJ_MAT_CHANGED)
-			subscriber->onCameraProjectionMatrixChanged(getPerspective());
+			subscriber->onCameraProjectionMatrixChanged(getProjectionMatrix());
 
 		if (message & CAM_VIEW_MAT_CHANGED)
-			subscriber->onCameraViewMatrixChanged(getCamera());
+			subscriber->onCameraViewMatrixChanged(getViewMatrix());
 	}
 }

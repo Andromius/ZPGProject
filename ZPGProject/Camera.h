@@ -27,8 +27,8 @@ private:
 public:
 	Camera(glm::vec3 eye, glm::vec3 target, glm::vec3 up, float fov, float sens, std::shared_ptr<Window> window);
 	~Camera();
-	glm::mat4 getCamera();
-	glm::mat4 getPerspective();
+	glm::mat4 getViewMatrix();
+	glm::mat4 getProjectionMatrix();
 	glm::vec3 getEye();
 
 	void onWindowSizeChanged(int width, int height) override;
