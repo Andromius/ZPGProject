@@ -1,79 +1,134 @@
 #include "Window.h"
-
-void Window::setHints()
-{
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE,
-		GLFW_OPENGL_CORE_PROFILE);
-}
+#include "Events/Messages/Message.h"
 
 void Window::initializeEvents()
 {
-	EventNotifier::getInstance().subscribeWindowSizeChanged(this);
-	EventNotifier::getInstance().subscribeWindowIconifyChanged(this);
-	EventNotifier::getInstance().subscribeWindowFocusChanged(this);
-	EventNotifier::getInstance().subscribeKey(this);
-
-	glfwSetWindowSizeCallback(window, EventNotifier::notifyWindowSizeChanged);
-	glfwSetWindowIconifyCallback(window, EventNotifier::notifyWindowIconifyChanged);
-	glfwSetWindowFocusCallback(window, EventNotifier::notifyWindowFocusChanged);
-	glfwSetMouseButtonCallback(window, EventNotifier::notifyMouseButton);
-	glfwSetCursorPosCallback(window, EventNotifier::notifyCursorPosChanged);
-	glfwSetKeyCallback(window, EventNotifier::notifyKey);
+	glfwSetWindowSizeCallback(_window, glfwOnSizeChanged);
+	glfwSetWindowIconifyCallback(_window, glfwOnIconifyChanged);
+	glfwSetWindowFocusCallback(_window, glfwOnFocusedChanged);
+	glfwSetMouseButtonCallback(_window, glfwOnMouseButton);
+	glfwSetCursorPosCallback(_window, glfwOnCursorPosChanged);
+	glfwSetKeyCallback(_window, glfwOnKey);
 }
+
+void Window::close()
+{
+	glfwSetWindowShouldClose(_window, 1);
+}
+
+void Window::setViewport()
+{
+	glViewport(0, 0, _width, _height);
+}
+
+void Window::glfwOnSizeChanged(GLFWwindow* window, int width, int height)
+{
+	Window* w = (Window*)(glfwGetWindowUserPointer(window));
+	if (w == nullptr) return;
+
+	w->_width = width;
+	w->_height = height;
+	w->setViewport();
+	w->notify(WIN_SIZE_CHANGED);
+}
+
+void Window::glfwOnIconifyChanged(GLFWwindow* window, int iconified)
+{
+	Window* w = (Window*)(glfwGetWindowUserPointer(window));
+	if (w == nullptr) return;
+
+	w->_iconified = iconified;
+	w->notify(WIN_ICONIFY_CHANGED);
+}
+
+void Window::glfwOnFocusedChanged(GLFWwindow* window, int focused)
+{
+	Window* w = (Window*)(glfwGetWindowUserPointer(window));
+	if (w == nullptr) return;
+
+	w->_focused = focused;
+	w->notify(WIN_FOCUS_CHANGED);
+}
+
+void Window::glfwOnMouseButton(GLFWwindow* window, int button, int action, int mode)
+{
+	Window* w = (Window*)(glfwGetWindowUserPointer(window));
+	if (w == nullptr) return;
+
+	w->notify(WIN_MOUSE_BUTTON);
+}
+
+void Window::glfwOnCursorPosChanged(GLFWwindow* window, double x, double y)
+{
+	Window* w = (Window*)(glfwGetWindowUserPointer(window));
+	if (w == nullptr) return;
+
+	w->_cursorPos.x = x;
+	w->_cursorPos.y = y;
+	w->notify(WIN_CURSOR_POS_CHANGED);
+}
+
+void Window::glfwOnKey(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	Window* w = (Window*)(glfwGetWindowUserPointer(window));
+	if (w == nullptr) return;
+	
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		w->close();
+
+	w->notify(WIN_KEYBOARD_KEY);
+}
+
 
 Window::Window(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share)
 {
-	window = glfwCreateWindow(width, height, title, monitor, share);
+	_window = glfwCreateWindow(width, height, title, monitor, share);
+	_width = width;
+	_height = height;
+	setViewport();
+	glfwSetWindowUserPointer(_window, (void*)this);
 	initializeEvents();
 }
 
 Window::~Window()
 {
-	unsubscribe();
-	glfwDestroyWindow(window);
+	glfwDestroyWindow(_window);
 }
 
 void Window::setAsCurrentContext()
 {
-	glfwMakeContextCurrent(window);
+	glfwMakeContextCurrent(_window);
 }
 
-GLFWwindow* Window::get()
+#pragma region Getters
+GLFWwindow* Window::getGLFWWindow()
 {
-	return window;
+	return _window;
 }
 
-#pragma region EventHandlers
-void Window::onWindowSizeChanged(GLFWwindow* window, int width, int height)
+int Window::getWidth()
 {
-	printf("resize %d, %d \n", width, height);
-	glViewport(0, 0, width, height);
+	return _width;
 }
 
-void Window::onWindowIconifyChanged(GLFWwindow* window, int iconified)
+int Window::getHeight()
 {
-	printf("iconfied: %d\n", iconified);
+	return _height;
 }
 
-void Window::onWindowFocusChanged(GLFWwindow* window, int focused)
+bool Window::getIconified()
 {
-	printf("focused: %d\n", focused);
+	return _iconified;
 }
 
-void Window::onKey(GLFWwindow* window, int key, int scancode, int action, int mods)
+bool Window::getFocused()
 {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
+	return _focused;
 }
+
+CursorPos Window::getCursorPos()
+{
+	return _cursorPos;
+}
+
 #pragma endregion
-
-void Window::unsubscribe()
-{
-	EventNotifier::getInstance().unsubscribeWindowSizeChanged(this);
-	EventNotifier::getInstance().unsubscribeWindowIconifyChanged(this);
-	EventNotifier::getInstance().unsubscribeWindowFocusChanged(this);
-	EventNotifier::getInstance().unsubscribeKey(this);
-}

@@ -7,11 +7,11 @@ CompositeTransform::~CompositeTransform()
 
 glm::mat4 CompositeTransform::transform()
 {
+	matrix = glm::mat4(1.f);
 	for (auto& transform : _transforms)
 	{
 		matrix *= transform->transform();
 	}
-	_transforms.clear();
 	return matrix;
 }
 

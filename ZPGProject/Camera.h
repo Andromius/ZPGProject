@@ -1,19 +1,21 @@
 #pragma once
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <memory>
 #include "Events/EventHandlers.h"
-#include "Events/EventNotifier.h"
-#include "Observables/ObservableObject.h"
-#include <list>
+#include "Window.h"
 
 
 class Camera : 
 	public WindowSizeChangedEventHandler,
-	public ObservableObject<CameraChangedEventHandler>,
+	public ObservableObject,
 	public KeyEventHandler,
-	public CursorPosChangedEventHandler
+	public CursorPosChangedEventHandler,
+	public MouseButtonEventHandler,
+	public EventHandler
 {
 private:
+	std::shared_ptr<Window> _window;
 	glm::vec3 _eye;
 	glm::vec3 _target;
 	glm::vec3 _up;
@@ -24,20 +26,23 @@ private:
 	float _sens;
 	float _pitch;
 	float _yaw;
+	bool _canTurn;
 
 public:
-	Camera(glm::vec3 eye, glm::vec3 target, glm::vec3 up, float fov, float width, float height, float sens);
+	Camera(glm::vec3 eye, glm::vec3 target, glm::vec3 up, float fov, float sens, std::shared_ptr<Window> window);
 	~Camera();
 	glm::mat4 getCamera();
 	glm::mat4 getPerspective();
+	glm::vec3 getEye();
 
 	// Inherited via WindowSizeChangedEventHandler
-	void onWindowSizeChanged(GLFWwindow* window, int width, int height) override;
-	// Inherited via ObservableObject
-	void notify() override;
+	void onWindowSizeChanged(int width, int height) override;
 	// Inherited via KeyEventHandler
-	void onKey(GLFWwindow* window, int key, int scancode, int action, int mods) override;
-	// Inherited via CursorPosChangedEventHandler
-	void onCursorPosChanged(GLFWwindow* window, double x, double y) override;
+	void onKey(GLFWwindow* window) override;
+	void onCursorPosChanged(CursorPos cursorPos) override;
+	void onEvent(int message) override;
+
+	// Inherited via MouseButtonEventHandler
+	void onMouseButton(GLFWwindow* window) override;
 };
 

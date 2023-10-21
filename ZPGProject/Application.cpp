@@ -4,22 +4,8 @@
 #include "Meshes/sphere.h"
 #include "Meshes/square.h"
 #include "Shaders/ShaderImporter.h"
+#include "Events/Messages/Message.h"
 #include <iostream>
-
-const char* fragment_shader =
-"#version 330\n"
-"out vec4 frag_colour;"
-"in vec3 pos;"
-"void main () {"
-"     frag_colour = vec4(pos, 1.0);"
-"}";
-
-const char* fragment_shader2 =
-"#version 330\n"
-"out vec4 frag_colour;"
-"void main () {"
-"     frag_colour = vec4 (0.0, 1.0, 1.0, 1.0);"
-"}";
 
 Application& Application::getInstance()
 {
@@ -35,11 +21,12 @@ Application::~Application()
 
 void Application::initialize()
 {
-	_shaderPrograms = std::vector<std::shared_ptr<ShaderProgram>>();
+	_shaderPrograms = std::map<std::string, std::shared_ptr<ShaderProgram>>();
+	_scenes = std::vector<std::shared_ptr<Scene>>();
+	_meshes = std::map<std::string, std::shared_ptr<Mesh>>();
+	_currentScene = 2;
 
-	EventNotifier::getInstance().subscribeError(this);
-
-	glfwSetErrorCallback(EventNotifier::notifyError);
+	glfwSetErrorCallback(onError);
 
 	if (!glfwInit()) {
 		fprintf(stderr, "ERROR: could not start GLFW3\n");
@@ -47,8 +34,9 @@ void Application::initialize()
 	}
 
 	_window = std::make_shared<Window>(800, 600, "ZPG", nullptr, nullptr);
+	_window->subscribe(this);
 
-	if (!_window->get()) {
+	if (!_window->getGLFWWindow()) {
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
@@ -70,92 +58,162 @@ void Application::initialize()
 	glfwGetVersion(&major, &minor, &revision);
 	printf("Using GLFW %i.%i.%i\n", major, minor, revision);
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 
-	int width, height;
-	glfwGetFramebufferSize(_window->get(), &width, &height);
-	float ratio = width / (float)height;
-	glViewport(0, 0, width, height);
-	glfwSetInputMode(_window->get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	_scene = std::make_shared<Scene>();
-	_camera = std::make_shared<Camera>(glm::vec3(0, 0, 3), glm::vec3(0, 0, -4), glm::vec3(0, 1, 0), 60.0f, 800.0f, 600.0f, 0.1f);
+	_camera = std::make_shared<Camera>(glm::vec3(0, 0, 3), glm::vec3(0, 0, -4), glm::vec3(0, 1, 0), 60.0f, 0.05f, _window);
 }
 
 void Application::createShaders()
 {
-	//create and compile shaders
-	std::vector<std::shared_ptr<Shader>> shaders
-	{
-		std::make_shared<VertexShader>("vertexShader"),
-		std::make_shared<FragmentShader>("fragmentShader")
-	};
-	_shaderPrograms.push_back(std::make_shared<ShaderProgram>(_camera));
-	_shaderPrograms[0]->attachShaders(shaders);
-	_shaderPrograms[0]->link();
+	VertexShader vertexShader("vertexShader");
+	FragmentShader phong("fragmentShaderPhong");
+	FragmentShader solid("fragmentShaderSolid");
+	FragmentShader lambert("fragmentShaderLambert");
+	FragmentShader blinn("fragmentShaderBlinn");
 
-	std::vector<std::shared_ptr<Shader>> shaders2
-	{
-		std::make_shared<VertexShader>("vertexShader"),
-		std::make_shared<FragmentShader>("fragmentShaderSolid")
-	};
-	_shaderPrograms.push_back(std::make_shared<ShaderProgram>(_camera));
-	_shaderPrograms[1]->attachShaders(shaders2);
-	_shaderPrograms[1]->link();
+	_shaderPrograms.insert(std::make_pair("phongProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, phong)));
+	_shaderPrograms.insert(std::make_pair("lambertProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, lambert)));
+	_shaderPrograms.insert(std::make_pair("solidProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, solid)));
+	_shaderPrograms.insert(std::make_pair("blinnProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, blinn)));
 
 	for (auto& shaderProgram : _shaderPrograms)
 	{
-		shaderProgram->checkStatus();
+		shaderProgram.second->checkStatus();
 	}
 }
 
 void Application::createModels()
 {
-	std::shared_ptr<DrawableObject> o1 = std::make_shared<DrawableObject>(std::make_shared<Mesh>(square), _shaderPrograms[1]);
-	o1->addTransform(std::make_shared<RotationTransform>(glm::radians(90.f), glm::vec3(1,0,0)))
-		.addTransform(std::make_shared<TranslateTransform>(glm::vec3( 0, 0, 1.0f )))
-		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 2, 2, 2 }));
-	_scene->addDrawableObject(o1);
+	_meshes.insert(std::make_pair("suziFlat", std::make_shared<Mesh>(suziFlat)));
+	_meshes.insert(std::make_pair("suziSmooth", std::make_shared<Mesh>(suziSmooth)));
+	_meshes.insert(std::make_pair("square", std::make_shared<Mesh>(square)));
+	_meshes.insert(std::make_pair("sphere", std::make_shared<Mesh>(sphere)));
+}
 
-	std::shared_ptr<DrawableObject> suzi = std::make_shared<DrawableObject>(std::make_shared<Mesh>(suziFlat), _shaderPrograms[0]);
-	suzi->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0.5f, .4f, .3f }))
-		.addTransform(std::make_shared<RotationTransform>(glm::radians(45.f), glm::vec3{ 0, 1, 0 }))
-		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ .2f, .2f, .2f }));
-	_scene->addDrawableObject(suzi);
-
-	std::shared_ptr<DrawableObject> suzi2 = std::make_shared<DrawableObject>(std::make_shared<Mesh>(suziSmooth), _shaderPrograms[0]);
-	suzi2->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0.5f, .4f, 5.f }))
-		.addTransform(std::make_shared<RotationTransform>(glm::radians(45.f), glm::vec3{ 0, 1, 0 }))
-		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ .2f, .2f, .2f }));
-	_scene->addDrawableObject(suzi2);
-
-	std::shared_ptr<DrawableObject> o2 = std::make_shared<DrawableObject>(std::make_shared<Mesh>(square), _shaderPrograms[1]);
-	o2->addTransform(std::make_shared<RotationTransform>(glm::radians(90.f), glm::vec3{ 1,0,0 }))
-		.addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0, 0, -2.0f }))
-		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 2, 2, 2 }));
-	_scene->addDrawableObject(o2);
-
-	std::shared_ptr<DrawableObject> sphereObj = std::make_shared<DrawableObject>(std::make_shared<Mesh>(sphere), _shaderPrograms[0]);
-	sphereObj->addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.2f, 0.2f, 0.2f }));
-	_scene->addDrawableObject(sphereObj);
-
+void Application::createScenes()
+{
+	_scenes.push_back(createSceneA());
+	_scenes.push_back(createSceneB());
+	_scenes.push_back(createSceneC());
+	notify(APP_SCENE_CHANGED);
 }
 
 void Application::run()
 {
-	while (!glfwWindowShouldClose(_window->get())) {
+	while (!glfwWindowShouldClose(_window->getGLFWWindow())) {
 		// clear color and depth buffer
 
-		_scene->draw();
+		_scenes[_currentScene]->draw();
 		// update other events like input handling
 		glfwPollEvents();
 		// put the stuff we’ve been drawing onto the display
-		glfwSwapBuffers(_window->get());
+		glfwSwapBuffers(_window->getGLFWWindow());
+	}
+}
+
+Scene& Application::getCurrentScene()
+{
+	return *_scenes[_currentScene];
+}
+
+void Application::onEvent(int message)
+{
+	if (message & WIN_KEYBOARD_KEY)
+	{
+		onKey(_window->getGLFWWindow());
+	}
+}
+
+void Application::onKey(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
+	{
+		if (_currentScene < _scenes.size() - 1) _currentScene++;
+		else _currentScene = 0;
+		notify(APP_SCENE_CHANGED);
 	}
 }
 
 void Application::onError(int error, const char* description)
 {
 	fputs(description, stderr);
+}
+
+std::shared_ptr<Scene> Application::createSceneA()
+{
+	std::shared_ptr<Scene> scene = std::make_shared<Scene>(_window);
+
+	std::shared_ptr<DrawableObject> sphereA = std::make_shared<DrawableObject>(_meshes["sphere"], _shaderPrograms["phongProgram"]);
+	sphereA->addTransform(std::make_shared<TranslateTransform>(glm::vec3(0.0f, 0.0f, 1.0f)))
+		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.2f, 0.2f, 0.2f }));
+	scene->addDrawableObject(sphereA);
+
+	scene->addLight(std::make_shared<Light>(glm::vec3(0, 0, 0)));
+
+	return scene;
+}
+
+std::shared_ptr<Scene> Application::createSceneB()
+{
+	std::shared_ptr<Scene> scene = std::make_shared<Scene>(_window);
+
+	std::shared_ptr<DrawableObject> sphereA = std::make_shared<DrawableObject>(_meshes["sphere"], _shaderPrograms["phongProgram"]);
+	sphereA->addTransform(std::make_shared<TranslateTransform>(glm::vec3(-0.5f, 0.0f, 0.0f)))
+		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.2f, 0.2f, 0.2f }));
+	scene->addDrawableObject(sphereA);
+
+	std::shared_ptr<DrawableObject> sphereB = std::make_shared<DrawableObject>(_meshes["sphere"], _shaderPrograms["phongProgram"]);
+	sphereB->addTransform(std::make_shared<TranslateTransform>(glm::vec3(0.5f, 0.0f, 0.0f)))
+		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.2f, 0.2f, 0.2f }));
+	scene->addDrawableObject(sphereB);
+
+	std::shared_ptr<DrawableObject> sphereC = std::make_shared<DrawableObject>(_meshes["sphere"], _shaderPrograms["phongProgram"]);
+	sphereC->addTransform(std::make_shared<TranslateTransform>(glm::vec3(0.0f, 0.5f, 0.0f)))
+		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.2f, 0.2f, 0.2f }));
+	scene->addDrawableObject(sphereC);
+
+	std::shared_ptr<DrawableObject> sphereD = std::make_shared<DrawableObject>(_meshes["sphere"], _shaderPrograms["phongProgram"]);
+	sphereD->addTransform(std::make_shared<TranslateTransform>(glm::vec3(0.0f, -0.5f, 0.0f)))
+		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.2f, 0.2f, 0.2f }));
+	scene->addDrawableObject(sphereD);
+
+	scene->addLight(std::make_shared<Light>(glm::vec3(0, 0, 0)));
+
+	return scene;
+}
+
+std::shared_ptr<Scene> Application::createSceneC()
+{
+	std::shared_ptr<Scene> scene = std::make_shared<Scene>(_window);
+
+	std::shared_ptr<DrawableObject> o1 = std::make_shared<DrawableObject>(_meshes["square"], _shaderPrograms["solidProgram"]);
+	o1->addTransform(std::make_shared<RotationTransform>(glm::radians(90.f), glm::vec3(1, 0, 0)))
+		.addTransform(std::make_shared<TranslateTransform>(glm::vec3(0, 0, 1.0f)))
+		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 2, 2, 2 }));
+	scene->addDrawableObject(o1);
+
+	std::shared_ptr<DrawableObject> o2 = std::make_shared<DrawableObject>(_meshes["square"], _shaderPrograms["solidProgram"]);
+	o2->addTransform(std::make_shared<RotationTransform>(glm::radians(90.f), glm::vec3{ 1,0,0 }))
+		.addTransform(std::make_shared<TranslateTransform>(glm::vec3(0, 0, -2.0f)))
+		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 2, 2, 2 }));
+	scene->addDrawableObject(o2);
+
+	std::shared_ptr<DrawableObject> suzi = std::make_shared<DrawableObject>(_meshes["suziFlat"], _shaderPrograms["lambertProgram"]);
+	suzi->addTransform(std::make_shared<TranslateTransform>(glm::vec3(0.5f, 0, 0)))
+		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ .2f, .2f, .2f }));
+	scene->addDrawableObject(suzi);
+
+	std::shared_ptr<DrawableObject> suzi2 = std::make_shared<DrawableObject>(_meshes["suziSmooth"], _shaderPrograms["blinnProgram"]);
+	suzi2->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0, 0.5, 0}))
+		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ .2f, .2f, .2f }));
+	scene->addDrawableObject(suzi2);
+
+	std::shared_ptr<DrawableObject> sphereObj = std::make_shared<DrawableObject>(_meshes["sphere"], _shaderPrograms["phongProgram"]);
+	sphereObj->addTransform(std::make_shared<TranslateTransform>(glm::vec3(-0.5f, 0.0f, 0.0f)))
+		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.2f, 0.2f, 0.2f }));
+	scene->addDrawableObject(sphereObj);
+
+	scene->addLight(std::make_shared<Light>(glm::vec3(0, 0, 0)));
+
+	return scene;
 }

@@ -132,10 +132,11 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Observables\ObservableObject.cpp" />
     <ClCompile Include="Shaders\ShaderImporter.cpp" />
     <ClCompile Include="Transforms\CompositeTransform.cpp" />
     <ClCompile Include="Drawables\DrawableObject.cpp" />
-    <ClCompile Include="Events\EventNotifier.cpp" />
     <ClCompile Include="Shaders\FragmentShader.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Meshes\Mesh.cpp" />
@@ -151,6 +152,10 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Events\CursorPos.h" />
+    <ClInclude Include="Events\Messages\Message.h" />
+    <ClInclude Include="Events\WindowEventHandler.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Meshes\plain.h" />
     <ClInclude Include="Meshes\sphere.h" />
     <ClInclude Include="Meshes\square.h" />
@@ -160,7 +165,6 @@
     <ClInclude Include="Shaders\ShaderImporter.h" />
     <ClInclude Include="Transforms\CompositeTransform.h" />
     <ClInclude Include="Drawables\DrawableObject.h" />
-    <ClInclude Include="Events\EventNotifier.h" />
     <ClInclude Include="Shaders\FragmentShader.h" />
     <ClInclude Include="Meshes\Mesh.h" />
     <ClInclude Include="Events\EventHandlers.h" />
@@ -177,6 +181,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Definitions\fragmentShader.frag" />
+    <None Include="Shaders\Definitions\fragmentShaderBlinn.frag" />
+    <None Include="Shaders\Definitions\fragmentShaderLambert.frag" />
+    <None Include="Shaders\Definitions\fragmentShaderPhong.frag" />
     <None Include="Shaders\Definitions\fragmentShaderSolid.frag" />
     <None Include="Shaders\Definitions\vertexShader.vert" />
   </ItemGroup>

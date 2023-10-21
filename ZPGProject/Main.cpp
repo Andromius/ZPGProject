@@ -8,6 +8,7 @@ int main(void)
 	app.initialize();
 	app.createShaders();
 	app.createModels();
+	app.createScenes();
 	app.run();
 
 	exit(EXIT_SUCCESS);

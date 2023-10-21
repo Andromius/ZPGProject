@@ -1,25 +1,23 @@
 #include "ShaderProgram.h"
+#include "Events/Messages/Message.h"
+#include "Application.h"
 
-ShaderProgram::ShaderProgram(std::shared_ptr<Camera> camera)
+ShaderProgram::ShaderProgram(std::shared_ptr<Camera> camera, VertexShader& vertexShader, FragmentShader& fragmentShader)
 {
 	_program = glCreateProgram();
+	glAttachShader(_program, vertexShader.get());
+	glAttachShader(_program, fragmentShader.get());
 	_camera = camera;
 	_camera->subscribe(this);
-	_projectionMatrix = _camera->getPerspective();
-	_viewMatrix = _camera->getCamera();
+	Application::getInstance().subscribe(this);
+	link();
+	onEvent(CAM_POSITION_CHANGED | CAM_PROJ_MAT_CHANGED | CAM_VIEW_MAT_CHANGED);
 }
 
 ShaderProgram::~ShaderProgram()
 {
+	Application::getInstance().unsubscribe(this);
 	_camera->unsubscribe(this);
-}
-
-void ShaderProgram::attachShaders(const std::vector<std::shared_ptr<Shader>>& shaders)
-{
-	for (auto& shader : shaders)
-	{
-		glAttachShader(_program, shader->get());
-	}
 }
 
 void ShaderProgram::link()
@@ -30,8 +28,6 @@ void ShaderProgram::link()
 void ShaderProgram::useProgram()
 {
 	glUseProgram(_program);
-	setMatrixVariable(_projectionMatrix, "projectionMatrix");
-	setMatrixVariable(_viewMatrix, "viewMatrix");
 }
 
 void ShaderProgram::checkStatus()
@@ -52,7 +48,19 @@ void ShaderProgram::checkStatus()
 void ShaderProgram::setMatrixVariable(glm::mat4 matrix, std::string name)
 {
 	const GLint id = glGetUniformLocation(_program, name.c_str());
-	glUniformMatrix4fv(id, 1, GL_FALSE, value_ptr(matrix));
+	glProgramUniformMatrix4fv(_program, id, 1, GL_FALSE, value_ptr(matrix));
+}
+
+void ShaderProgram::setVec3Variable(glm::vec3 vector, std::string name)
+{
+	const GLint id = glGetUniformLocation(_program, name.c_str());
+	glProgramUniform3fv(_program, id, 1, value_ptr(vector));
+}
+
+void ShaderProgram::setVec4Variable(glm::vec4 vector, std::string name)
+{
+	const GLint id = glGetUniformLocation(_program, name.c_str());
+	glProgramUniform4fv(_program, id, 1, value_ptr(vector));
 }
 
 void ShaderProgram::resetProgram()
@@ -60,8 +68,23 @@ void ShaderProgram::resetProgram()
 	glUseProgram(0);
 }
 
-void ShaderProgram::onCameraChanged()
+void ShaderProgram::onEvent(int message)
 {
-	_projectionMatrix = _camera->getPerspective();
-	_viewMatrix = _camera->getCamera();
+	if (message & CAM_POSITION_CHANGED)
+		setVec3Variable(_camera->getEye(), "cameraPosition");
+
+	if (message & CAM_VIEW_MAT_CHANGED)
+		setMatrixVariable(_camera->getCamera(), "viewMatrix");
+
+	if (message & CAM_PROJ_MAT_CHANGED)
+		setMatrixVariable(_camera->getPerspective(), "projectionMatrix");
+
+	if (message & APP_SCENE_CHANGED)
+	{
+		for (auto& light : Application::getInstance().getCurrentScene().getLights())
+		{
+			setVec3Variable(light->_position, "lightPosition");
+			setVec4Variable(light->_color, "lightColor");
+		}
+	}
 }

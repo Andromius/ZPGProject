@@ -3,26 +3,29 @@
 #include "Meshes/Mesh.h"
 #include "Drawables/DrawableObject.h"
 #include "Events/EventHandlers.h"
-#include "Events/EventNotifier.h"
-#include "Transforms/RotationTransform.h"
-#include "Transforms/ScaleTransform.h"
+#include "Window.h"
+#include "Light.h"
 
 class Scene : 
-	public KeyEventHandler
+	public EventHandler
 {
 private:
-	int selectedObjectIndex = 0;
-	std::vector<std::shared_ptr<DrawableObject>> objects;
+	size_t selectedObjectIndex = 0;
+	std::shared_ptr<Window> _window;
+	std::vector<std::shared_ptr<DrawableObject>> _objects;
+	std::vector<std::shared_ptr<Light>> _lights;
 
 public:
-	Scene(std::vector<std::shared_ptr<DrawableObject>> objects);
-	Scene();
+	Scene(std::shared_ptr<Window> window);
 	~Scene();
 
-	void addDrawableObject(std::shared_ptr<DrawableObject> objects);
+	void addDrawableObject(std::shared_ptr<DrawableObject> object);
+	void addLight(std::shared_ptr<Light> light);
+	std::vector<std::shared_ptr<Light>> getLights();
 	void draw();
+	void onKey(GLFWwindow* window);
 
-	// Inherited via KeyEventHandler
-	void onKey(GLFWwindow* window, int key, int scancode, int action, int mods) override;
+	// Inherited via EventHandler
+	void onEvent(int message) override;
 };
 

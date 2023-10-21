@@ -1,33 +1,32 @@
 #pragma once
 #include <vector>
-#include "Shader.h"
 #include <string>
-#include "glm/mat4x4.hpp"
-#include <glm/gtc/type_ptr.hpp>
-#include "Events/EventHandlers.h"
-#include "Events/EventNotifier.h"
-#include "Camera.h"
 #include <memory>
+#include "VertexShader.h"
+#include "FragmentShader.h"
+#include "Camera.h"
+#include "Events/EventHandlers.h"
+#include <glm/gtc/type_ptr.hpp>
 
 class ShaderProgram :
-	public CameraChangedEventHandler
+	public EventHandler
 {
 private:
 	GLuint _program;
-	glm::mat4 _projectionMatrix;
-	glm::mat4 _viewMatrix;
 	std::shared_ptr<Camera> _camera;
 
 public:
-	ShaderProgram(std::shared_ptr<Camera> camera);
+	ShaderProgram(std::shared_ptr<Camera> camera, VertexShader& vertexShader, FragmentShader& fragmentShader);
 	~ShaderProgram();
-	void attachShaders(const std::vector<std::shared_ptr<Shader>>& shaders);
+
 	void link();
 	void useProgram();
 	void checkStatus();
 	void setMatrixVariable(glm::mat4 matrix, std::string name);
+	void setVec3Variable(glm::vec3 vector, std::string name);
+	void setVec4Variable(glm::vec4 vector, std::string name);
 	static void resetProgram();
 
 	// Inherited via CameraChangedEventHandler
-	void onCameraChanged() override;
+	void onEvent(int message) override;
 };

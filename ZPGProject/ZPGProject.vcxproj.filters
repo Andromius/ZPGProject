@@ -78,9 +78,6 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Events\EventNotifier.cpp">
-      <Filter>Source Files\Events</Filter>
-    </ClCompile>
     <ClCompile Include="Transforms\RotationTransform.cpp">
       <Filter>Source Files\Transforms</Filter>
     </ClCompile>
@@ -100,6 +97,12 @@
       <Filter>Source Files\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Shaders\ShaderImporter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Observables\ObservableObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -129,9 +132,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Events\EventHandlers.h">
-      <Filter>Header Files\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="Events\EventNotifier.h">
       <Filter>Header Files\Events</Filter>
     </ClInclude>
     <ClInclude Include="Drawables\DrawableObject.h">
@@ -179,9 +179,25 @@
     <ClInclude Include="Shaders\ShaderImporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Events\Messages\Message.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Events\CursorPos.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Events\WindowEventHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Definitions\vertexShader.vert" />
     <None Include="Shaders\Definitions\fragmentShader.frag" />
+    <None Include="Shaders\Definitions\fragmentShaderSolid.frag" />
+    <None Include="Shaders\Definitions\fragmentShaderLambert.frag" />
+    <None Include="Shaders\Definitions\fragmentShaderPhong.frag" />
+    <None Include="Shaders\Definitions\fragmentShaderBlinn.frag" />
   </ItemGroup>
 </Project>

@@ -5,7 +5,12 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 out vec3 pos;
-void main () {
+out vec3 worldPosition;
+out vec3 worldNormal;
+
+void main ( void ) {
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4 (vp, 1.0);
-	pos = vn;
+	vec4 worldPositionVec4 = modelMatrix * vec4(vp, 1.0f);
+	worldPosition = vec3(worldPositionVec4);
+    worldNormal = normalize(vec3(modelMatrix * vec4(vn, 0.0)));
 }
