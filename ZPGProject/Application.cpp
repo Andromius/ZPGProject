@@ -5,7 +5,9 @@
 #include "Meshes/square.h"
 #include "Shaders/ShaderImporter.h"
 #include "Events/Messages/Message.h"
-#include <iostream>
+#include "Shaders/Shader.h"  
+#include "Shaders/FragmentShader.h"
+#include "Shaders/VertexShader.h"
 
 Application& Application::getInstance()
 {
@@ -116,14 +118,6 @@ Scene& Application::getCurrentScene()
 	return *_scenes[_currentScene];
 }
 
-void Application::onEvent(int message)
-{
-	if (message & WIN_KEYBOARD_KEY)
-	{
-		onKey(_window->getGLFWWindow());
-	}
-}
-
 void Application::onKey(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
@@ -131,6 +125,15 @@ void Application::onKey(GLFWwindow* window)
 		if (_currentScene < _scenes.size() - 1) _currentScene++;
 		else _currentScene = 0;
 		notify(APP_SCENE_CHANGED);
+	}
+}
+
+void Application::notify(int message)
+{
+	for (auto& subscriber : _subscribers)
+	{
+		if (message & APP_SCENE_CHANGED)
+			subscriber->onSceneChanged(*_scenes[_currentScene]);
 	}
 }
 

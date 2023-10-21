@@ -1,25 +1,21 @@
 #pragma once
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <memory>
 #include <map>
 
-#include "Shaders/Shader.h"  
-#include "Shaders/FragmentShader.h"
-#include "Shaders/VertexShader.h"
 #include "Shaders/ShaderProgram.h"
 
 #include "Scene.h"
-#include "Window.h"
+#include "Events/WindowEventHandler.h"
 #include "Camera.h"
 
 #include "Transforms/CompositeTransform.h"
+#include <Events/ApplicationEventHandler.h>
 
 class Application : 
-	public EventHandler,
-	public KeyEventHandler,
-	public ObservableObject
+	public WindowEventHandler,
+	public ObservableObject<ApplicationEventHandler>
 {
 private:
 	size_t _currentScene;
@@ -44,10 +40,9 @@ public:
 	void run();
 	Scene& getCurrentScene();
 
-	// Inherited via EventHandler
-	void onEvent(int message) override;
-
-	// Inherited via KeyEventHandler
 	void onKey(GLFWwindow* window) override;
+
+	// Inherited via ObservableObject
+	void notify(int message) override;
 };
 

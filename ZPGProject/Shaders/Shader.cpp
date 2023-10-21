@@ -7,7 +7,7 @@ void Shader::compile()
 
 void Shader::setSource(const char* shaderSource)
 {
-	glShaderSource(shader, 1, &shaderSource, NULL);
+	glShaderSource(shader, 1, &shaderSource, nullptr);
 }
 
 GLuint Shader::get()

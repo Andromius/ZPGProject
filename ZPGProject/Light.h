@@ -2,8 +2,7 @@
 #include <glm/glm.hpp>
 #include "Observables/ObservableObject.h"
 
-class Light : 
-	public ObservableObject
+class Light
 {
 public:
 	glm::vec3 _position;

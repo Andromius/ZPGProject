@@ -1,11 +1,11 @@
 #pragma once
-#include <GLFW/glfw3.h>  
+#include "Events/WindowEventHandler.h"
 #include <stdio.h>
 #include "Observables/ObservableObject.h"
 #include "Events/CursorPos.h"
 
 class Window :
-	public ObservableObject
+	public ObservableObject<WindowEventHandler>
 {
 private:
 	GLFWwindow* _window;
@@ -40,5 +40,8 @@ public:
 	bool getFocused();
 	CursorPos getCursorPos();
 	#pragma endregion
+
+	// Inherited via ObservableObject
+	void notify(int message) override;
 };
 

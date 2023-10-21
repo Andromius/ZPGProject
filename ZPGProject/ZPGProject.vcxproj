@@ -132,8 +132,10 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Events\ApplicationEventHandler.cpp" />
+    <ClCompile Include="Events\CameraEventHandler.cpp" />
+    <ClCompile Include="Events\WindowEventHandler.cpp" />
     <ClCompile Include="Light.cpp" />
-    <ClCompile Include="Observables\ObservableObject.cpp" />
     <ClCompile Include="Shaders\ShaderImporter.cpp" />
     <ClCompile Include="Transforms\CompositeTransform.cpp" />
     <ClCompile Include="Drawables\DrawableObject.cpp" />
@@ -152,6 +154,8 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Events\ApplicationEventHandler.h" />
+    <ClInclude Include="Events\CameraEventHandler.h" />
     <ClInclude Include="Events\CursorPos.h" />
     <ClInclude Include="Events\Messages\Message.h" />
     <ClInclude Include="Events\WindowEventHandler.h" />
@@ -167,7 +171,6 @@
     <ClInclude Include="Drawables\DrawableObject.h" />
     <ClInclude Include="Shaders\FragmentShader.h" />
     <ClInclude Include="Meshes\Mesh.h" />
-    <ClInclude Include="Events\EventHandlers.h" />
     <ClInclude Include="Transforms\RotationTransform.h" />
     <ClInclude Include="Transforms\ScaleTransform.h" />
     <ClInclude Include="Scene.h" />

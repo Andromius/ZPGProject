@@ -130,5 +130,28 @@ CursorPos Window::getCursorPos()
 {
 	return _cursorPos;
 }
-
 #pragma endregion
+
+void Window::notify(int message)
+{
+	for (auto& subscriber : _subscribers)
+	{
+		if (message & WIN_CURSOR_POS_CHANGED)
+			subscriber->onCursorPositionChanged(_cursorPos);
+
+		if (message & WIN_FOCUS_CHANGED)
+			subscriber->onWindowFocusChanged(_focused);
+
+		if (message & WIN_ICONIFY_CHANGED)
+			subscriber->onWindowIconifyChanged(_iconified);
+
+		if (message & WIN_KEYBOARD_KEY)
+			subscriber->onKey(_window);
+
+		if (message & WIN_MOUSE_BUTTON)
+			subscriber->onMouseButton(_window);
+
+		if (message & WIN_SIZE_CHANGED)
+			subscriber->onWindowSizeChanged(_width, _height);
+	}
+}

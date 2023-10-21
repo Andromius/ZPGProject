@@ -2,12 +2,11 @@
 #include <vector>
 #include "Meshes/Mesh.h"
 #include "Drawables/DrawableObject.h"
-#include "Events/EventHandlers.h"
 #include "Window.h"
 #include "Light.h"
 
 class Scene : 
-	public EventHandler
+	public WindowEventHandler
 {
 private:
 	size_t selectedObjectIndex = 0;
@@ -23,9 +22,7 @@ public:
 	void addLight(std::shared_ptr<Light> light);
 	std::vector<std::shared_ptr<Light>> getLights();
 	void draw();
-	void onKey(GLFWwindow* window);
-
-	// Inherited via EventHandler
-	void onEvent(int message) override;
+	
+	void onKey(GLFWwindow* window) override;
 };
 
