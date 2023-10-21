@@ -1,7 +1,5 @@
 #include "ShaderProgram.h"
-#include "Events/Messages/Message.h"
 #include "Application.h"
-
 ShaderProgram::ShaderProgram(std::shared_ptr<Camera> camera, VertexShader& vertexShader, FragmentShader& fragmentShader)
 {
 	_program = glCreateProgram();
@@ -11,7 +9,9 @@ ShaderProgram::ShaderProgram(std::shared_ptr<Camera> camera, VertexShader& verte
 	_camera->subscribe(this);
 	Application::getInstance().subscribe(this);
 	link();
-	onEvent(CAM_POSITION_CHANGED | CAM_PROJ_MAT_CHANGED | CAM_VIEW_MAT_CHANGED);
+	onCameraPositionChanged(_camera->getEye());
+	onCameraProjectionMatrixChanged(_camera->getPerspective());
+	onCameraViewMatrixChanged(_camera->getCamera());
 }
 
 ShaderProgram::~ShaderProgram()
@@ -68,23 +68,26 @@ void ShaderProgram::resetProgram()
 	glUseProgram(0);
 }
 
-void ShaderProgram::onEvent(int message)
+void ShaderProgram::onCameraPositionChanged(glm::vec3 position)
 {
-	if (message & CAM_POSITION_CHANGED)
-		setVec3Variable(_camera->getEye(), "cameraPosition");
+	setVec3Variable(position, "cameraPosition");
+}
 
-	if (message & CAM_VIEW_MAT_CHANGED)
-		setMatrixVariable(_camera->getCamera(), "viewMatrix");
+void ShaderProgram::onCameraProjectionMatrixChanged(glm::mat4 matrix)
+{
+	setMatrixVariable(matrix, "projectionMatrix");
+}
 
-	if (message & CAM_PROJ_MAT_CHANGED)
-		setMatrixVariable(_camera->getPerspective(), "projectionMatrix");
+void ShaderProgram::onCameraViewMatrixChanged(glm::mat4 matrix)
+{
+	setMatrixVariable(matrix, "viewMatrix");
+}
 
-	if (message & APP_SCENE_CHANGED)
+void ShaderProgram::onSceneChanged(Scene& scene)
+{
+	for (auto& light : scene.getLights())
 	{
-		for (auto& light : Application::getInstance().getCurrentScene().getLights())
-		{
-			setVec3Variable(light->_position, "lightPosition");
-			setVec4Variable(light->_color, "lightColor");
-		}
+		setVec3Variable(light->_position, "lightPosition");
+		setVec4Variable(light->_color, "lightColor");
 	}
 }

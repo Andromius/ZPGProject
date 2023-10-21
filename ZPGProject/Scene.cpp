@@ -86,12 +86,3 @@ void Scene::onKey(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
         _objects[selectedObjectIndex]->addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 1.1f, 1.1f, 1.1f }));
 }
-
-
-void Scene::onEvent(int message)
-{
-    if (message & WIN_KEYBOARD_KEY)
-    {
-        Application::getInstance().getCurrentScene().onKey(_window->getGLFWWindow());
-    }
-}

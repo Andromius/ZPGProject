@@ -5,7 +5,9 @@
 #include "Meshes/square.h"
 #include "Shaders/ShaderImporter.h"
 #include "Events/Messages/Message.h"
-#include <iostream>
+#include "Shaders/Shader.h"  
+#include "Shaders/FragmentShader.h"
+#include "Shaders/VertexShader.h"
 
 Application& Application::getInstance()
 {
@@ -34,6 +36,7 @@ void Application::initialize()
 	}
 
 	_window = std::make_shared<Window>(800, 600, "ZPG", nullptr, nullptr);
+	_camera = std::make_shared<Camera>(glm::vec3(0, 0, 2), glm::vec3(0, 0, -4), glm::vec3(0, 1, 0), 60.0f, 0.05f, _window);
 	_window->subscribe(this);
 
 	if (!_window->getGLFWWindow()) {
@@ -60,7 +63,6 @@ void Application::initialize()
 
 	glEnable(GL_DEPTH_TEST);
 
-	_camera = std::make_shared<Camera>(glm::vec3(0, 0, 3), glm::vec3(0, 0, -4), glm::vec3(0, 1, 0), 60.0f, 0.05f, _window);
 }
 
 void Application::createShaders()
@@ -116,14 +118,6 @@ Scene& Application::getCurrentScene()
 	return *_scenes[_currentScene];
 }
 
-void Application::onEvent(int message)
-{
-	if (message & WIN_KEYBOARD_KEY)
-	{
-		onKey(_window->getGLFWWindow());
-	}
-}
-
 void Application::onKey(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
@@ -131,6 +125,15 @@ void Application::onKey(GLFWwindow* window)
 		if (_currentScene < _scenes.size() - 1) _currentScene++;
 		else _currentScene = 0;
 		notify(APP_SCENE_CHANGED);
+	}
+}
+
+void Application::notify(int message)
+{
+	for (auto& subscriber : _subscribers)
+	{
+		if (message & APP_SCENE_CHANGED)
+			subscriber->onSceneChanged(getCurrentScene());
 	}
 }
 

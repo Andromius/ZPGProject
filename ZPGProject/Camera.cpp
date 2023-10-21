@@ -15,7 +15,7 @@ Camera::Camera(glm::vec3 eye, glm::vec3 target, glm::vec3 up, float fov, float s
 	_window = window;
 	_canTurn = false;
 	_window->subscribe(this);
-	onEvent(WIN_SIZE_CHANGED);
+	onWindowSizeChanged(_window->getWidth(), _window->getHeight());
 }
 
 Camera::~Camera()
@@ -85,7 +85,7 @@ void Camera::onKey(GLFWwindow* window)
 	}
 }
 
-void Camera::onCursorPosChanged(CursorPos cursorPos)
+void Camera::onCursorPositionChanged(CursorPos cursorPos)
 {
 	if (!_canTurn) return;
 
@@ -108,21 +108,6 @@ void Camera::onCursorPosChanged(CursorPos cursorPos)
 	notify(CAM_VIEW_MAT_CHANGED);
 }
 
-void Camera::onEvent(int message)
-{
-	if (message & WIN_KEYBOARD_KEY)
-		onKey(_window->getGLFWWindow());
-
-	if (message & WIN_SIZE_CHANGED)
-		onWindowSizeChanged(_window->getWidth(), _window->getHeight());
-	
-	if (message & WIN_CURSOR_POS_CHANGED)
-		onCursorPosChanged(_window->getCursorPos());
-
-	if (message & WIN_MOUSE_BUTTON)
-		onMouseButton(_window->getGLFWWindow());
-}
-
 void Camera::onMouseButton(GLFWwindow* window)
 {
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
@@ -139,4 +124,17 @@ void Camera::onMouseButton(GLFWwindow* window)
 
 }
 
+void Camera::notify(int message)
+{
+	for (auto& subscriber : _subscribers)
+	{
+		if (message & CAM_POSITION_CHANGED)
+			subscriber->onCameraPositionChanged(getEye());
+		
+		if (message & CAM_PROJ_MAT_CHANGED)
+			subscriber->onCameraProjectionMatrixChanged(getPerspective());
 
+		if (message & CAM_VIEW_MAT_CHANGED)
+			subscriber->onCameraViewMatrixChanged(getCamera());
+	}
+}

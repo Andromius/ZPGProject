@@ -5,11 +5,13 @@
 #include "VertexShader.h"
 #include "FragmentShader.h"
 #include "Camera.h"
-#include "Events/EventHandlers.h"
+#include "Events/ApplicationEventHandler.h"
+#include "Events/CameraEventHandler.h"
 #include <glm/gtc/type_ptr.hpp>
 
 class ShaderProgram :
-	public EventHandler
+	public CameraEventHandler,
+	public ApplicationEventHandler
 {
 private:
 	GLuint _program;
@@ -27,6 +29,9 @@ public:
 	void setVec4Variable(glm::vec4 vector, std::string name);
 	static void resetProgram();
 
-	// Inherited via CameraChangedEventHandler
-	void onEvent(int message) override;
+	void onCameraPositionChanged(glm::vec3 position) override;
+	void onCameraProjectionMatrixChanged(glm::mat4 matrix) override;
+	void onCameraViewMatrixChanged(glm::mat4 matrix) override;
+
+	void onSceneChanged(Scene& scene) override;
 };

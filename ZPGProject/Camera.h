@@ -2,17 +2,13 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
-#include "Events/EventHandlers.h"
 #include "Window.h"
+#include "Events/CameraEventHandler.h"
 
 
 class Camera : 
-	public WindowSizeChangedEventHandler,
-	public ObservableObject,
-	public KeyEventHandler,
-	public CursorPosChangedEventHandler,
-	public MouseButtonEventHandler,
-	public EventHandler
+	public WindowEventHandler,
+	public ObservableObject<CameraEventHandler>
 {
 private:
 	std::shared_ptr<Window> _window;
@@ -35,14 +31,12 @@ public:
 	glm::mat4 getPerspective();
 	glm::vec3 getEye();
 
-	// Inherited via WindowSizeChangedEventHandler
 	void onWindowSizeChanged(int width, int height) override;
-	// Inherited via KeyEventHandler
 	void onKey(GLFWwindow* window) override;
-	void onCursorPosChanged(CursorPos cursorPos) override;
-	void onEvent(int message) override;
-
-	// Inherited via MouseButtonEventHandler
+	void onCursorPositionChanged(CursorPos cursorPos) override;
 	void onMouseButton(GLFWwindow* window) override;
+
+	// Inherited via ObservableObject
+	void notify(int message) override;
 };
 
