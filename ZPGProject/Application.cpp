@@ -216,6 +216,11 @@ std::shared_ptr<Scene> Application::createSceneC()
 		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.2f, 0.2f, 0.2f }));
 	scene->addDrawableObject(sphereObj);
 
+	std::shared_ptr<DrawableObject> sphereObj2 = std::make_shared<DrawableObject>(_meshes["sphere"], _shaderPrograms["blinnProgram"]);
+	sphereObj2->addTransform(std::make_shared<TranslateTransform>(glm::vec3(0.0f, -0.5f, 0.0f)))
+		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.2f, 0.2f, 0.2f }));
+	scene->addDrawableObject(sphereObj2);
+
 	scene->addLight(std::make_shared<Light>(glm::vec3(0, 0, 0)));
 
 	return scene;

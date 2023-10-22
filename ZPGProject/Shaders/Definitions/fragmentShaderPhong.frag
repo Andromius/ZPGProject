@@ -7,7 +7,7 @@ uniform vec4 lightColor;
 
 void main ( void )
 {
-	float specularStrength = 1;
+	float specularStrength = 10;
 	vec3 cameraDirection = normalize(cameraPosition - worldPosition);
     vec3 lightDirection = normalize(lightPosition - worldPosition);
 	

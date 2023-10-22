@@ -43,46 +43,47 @@ void Scene::draw()
 
 void Scene::onKey(GLFWwindow* window)
 {
+    Scene& s = Application::getInstance().getCurrentScene();
     if (glfwGetKey(window, GLFW_KEY_RIGHT_BRACKET) == GLFW_PRESS) {
-        if (selectedObjectIndex < _objects.size() - 1)
-            selectedObjectIndex++;
+        if (s.selectedObjectIndex < s._objects.size() - 1)
+            s.selectedObjectIndex++;
         else
-            selectedObjectIndex = 0;
+            s.selectedObjectIndex = 0;
     }
 
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        _objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0, 0.01f, 0 }));
+        s._objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0, 0.01f, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        _objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0, -0.01f, 0 }));
+        s._objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0, -0.01f, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        _objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ -0.01f, 0, 0 }));
+        s._objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ -0.01f, 0, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        _objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0.01f, 0, 0 }));
+        s._objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0.01f, 0, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
-        _objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(-0.05f, glm::vec3{ 0, 1, 0 }));
+        s._objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(-0.05f, glm::vec3{ 0, 1, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_BRACKET) == GLFW_PRESS)
-        _objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(0.05f, glm::vec3{ 0, 1, 0 }));
+        s._objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(0.05f, glm::vec3{ 0, 1, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-        _objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(-0.05f, glm::vec3{ 1, 0, 0 }));
+        s._objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(-0.05f, glm::vec3{ 1, 0, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_SEMICOLON) == GLFW_PRESS)
-        _objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(0.05f, glm::vec3{ 1, 0, 0 }));
+        s._objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(0.05f, glm::vec3{ 1, 0, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-        _objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(0.05f, glm::vec3{ 0, 0, 1 }));
+        s._objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(0.05f, glm::vec3{ 0, 0, 1 }));
 
     if (glfwGetKey(window, GLFW_KEY_APOSTROPHE) == GLFW_PRESS)
-        _objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(-0.05f, glm::vec3{ 0, 0, 1 }));
+        s._objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(-0.05f, glm::vec3{ 0, 0, 1 }));
 
     if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
-        _objects[selectedObjectIndex]->addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.9f, 0.9f, 0.9f }));
+        s._objects[selectedObjectIndex]->addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.9f, 0.9f, 0.9f }));
 
     if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
-        _objects[selectedObjectIndex]->addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 1.1f, 1.1f, 1.1f }));
+        s._objects[selectedObjectIndex]->addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 1.1f, 1.1f, 1.1f }));
 }
