@@ -24,11 +24,14 @@ private:
 	std::map<std::string, std::shared_ptr<Mesh>> _meshes;
 	std::shared_ptr<Camera> _camera;
 	std::map<std::string, std::shared_ptr<ShaderProgram>> _shaderPrograms;
+	std::map<std::string, std::shared_ptr<Material>> _materials;
 
 	static void onError(int error, const char* description);
 	std::shared_ptr<Scene> createSceneA();
 	std::shared_ptr<Scene> createSceneB();
 	std::shared_ptr<Scene> createSceneC();
+	std::shared_ptr<Scene> createSceneD();
+	std::shared_ptr<Scene> createSceneE();
 
 public:
 	static Application& getInstance();
@@ -37,6 +40,7 @@ public:
 	void createShaders();
 	void createModels();
 	void createScenes();
+	void createMaterials();
 	void run();
 	Scene& getCurrentScene();
 

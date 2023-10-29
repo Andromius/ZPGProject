@@ -1,10 +1,11 @@
 #include "DrawableObject.h"
 
-DrawableObject::DrawableObject(std::shared_ptr<Mesh> mesh, std::shared_ptr<ShaderProgram> program)
+DrawableObject::DrawableObject(std::shared_ptr<Mesh> mesh, std::shared_ptr<ShaderProgram> program, std::shared_ptr<Material> material)
 {
 	_mesh = mesh;
 	_transform = std::make_unique<CompositeTransform>();
 	_program = program;
+	_material = material;
 }
 
 DrawableObject& DrawableObject::addTransform(std::shared_ptr<Transform> transform)
@@ -16,7 +17,14 @@ DrawableObject& DrawableObject::addTransform(std::shared_ptr<Transform> transfor
 void DrawableObject::draw()
 {
 	_program->useProgram();
-	_program->setMatrixVariable(_transform->transform(), "modelMatrix");
+	_transform->update();
+	_program->setVariable(_transform->transform(), "modelMatrix");
+	_program->setMaterial(*_material);
 	_mesh->draw();
 	ShaderProgram::resetProgram();
+}
+
+glm::mat4 DrawableObject::getModelMatrix()
+{
+	return _transform->transform();
 }

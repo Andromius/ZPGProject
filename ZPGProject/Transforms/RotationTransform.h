@@ -3,7 +3,7 @@
 
 class RotationTransform : public Transform
 {
-private:
+protected:
 	float _angle;
 	glm::vec3 _axis;
 public:

@@ -1,24 +1,30 @@
-# version 400
+#version 400
 in vec3 worldPosition;
 in vec3 worldNormal;
 uniform vec3 cameraPosition;
 uniform vec3 lightPosition;
 uniform vec4 lightColor;
+uniform vec4 objectColor;
+uniform float specularStrength;
+uniform int shininess;
+uniform float lightAttenuation;
 
 void main ( void )
 {
-	float specularStrength = 10;
 	vec3 cameraDirection = normalize(cameraPosition - worldPosition);
     vec3 lightDirection = normalize(lightPosition - worldPosition);
 	
 	vec3 reflectDirection = reflect(-lightDirection , worldNormal);
-	float spec = pow(max(dot(cameraDirection, reflectDirection), 0.0), 32);
+	float spec = pow(max(dot(cameraDirection, reflectDirection), 0.0), shininess);
+	
 	vec4 specularColor = specularStrength * spec * lightColor;
 	
-	float dotProduct = max(dot(lightDirection, worldNormal), 0.0);
+	float diff = max(dot(lightDirection, worldNormal), 0.0);
 	
-	vec4 objectColor = vec4 (0.385 ,0.647 ,0.812 ,1.0);
-	vec4 diffuseColor = dotProduct * lightColor;
+	vec4 diffuseColor = diff * lightColor;
     vec4 ambientColor = vec4( 0.1, 0.1, 0.1, 1.0);
-	gl_FragColor = (ambientColor + diffuseColor + specularColor) * objectColor;
+	float distance = length(lightPosition - worldPosition);
+	float attenuation = 1.0 / (1.0 + lightAttenuation * distance * distance);
+
+	gl_FragColor = (ambientColor + attenuation * (diffuseColor + specularColor)) * objectColor;
 }

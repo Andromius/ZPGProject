@@ -4,9 +4,12 @@
 #include "Drawables/DrawableObject.h"
 #include "Window.h"
 #include "Light.h"
+#include <Events/SceneEventHandler.h>
 
 class Scene : 
-	public WindowEventHandler
+	public WindowEventHandler,
+	public LightEventHandler,
+	public ObservableObject<SceneEventHandler>
 {
 private:
 	size_t selectedObjectIndex = 0;
@@ -24,5 +27,9 @@ public:
 	void draw();
 	
 	void onKey(GLFWwindow* window) override;
+	void onLightChanged() override;
+
+	// Inherited via ObservableObject
+	void notify(int message) override;
 };
 

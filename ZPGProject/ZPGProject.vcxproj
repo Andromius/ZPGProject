@@ -132,8 +132,11 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Drawables\Material.cpp" />
     <ClCompile Include="Events\ApplicationEventHandler.cpp" />
     <ClCompile Include="Events\CameraEventHandler.cpp" />
+    <ClCompile Include="Events\LightEventHandler.cpp" />
+    <ClCompile Include="Events\SceneEventHandler.cpp" />
     <ClCompile Include="Events\WindowEventHandler.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Shaders\ShaderImporter.cpp" />
@@ -142,11 +145,14 @@
     <ClCompile Include="Shaders\FragmentShader.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Meshes\Mesh.cpp" />
+    <ClCompile Include="Transforms\ContinuousRotationTransform.cpp" />
+    <ClCompile Include="Transforms\GeneralAxisRotationTransform.cpp" />
     <ClCompile Include="Transforms\RotationTransform.cpp" />
     <ClCompile Include="Transforms\ScaleTransform.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shaders\Shader.cpp" />
     <ClCompile Include="Shaders\ShaderProgram.cpp" />
+    <ClCompile Include="Transforms\Transform.cpp" />
     <ClCompile Include="Transforms\TranslateTransform.cpp" />
     <ClCompile Include="Shaders\VertexShader.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -154,16 +160,22 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Drawables\Material.h" />
     <ClInclude Include="Events\ApplicationEventHandler.h" />
     <ClInclude Include="Events\CameraEventHandler.h" />
     <ClInclude Include="Events\CursorPos.h" />
+    <ClInclude Include="Events\LightEventHandler.h" />
     <ClInclude Include="Events\Messages\Message.h" />
+    <ClInclude Include="Events\SceneEventHandler.h" />
     <ClInclude Include="Events\WindowEventHandler.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="Meshes\bushes.h" />
+    <ClInclude Include="Meshes\gift.h" />
     <ClInclude Include="Meshes\plain.h" />
     <ClInclude Include="Meshes\sphere.h" />
     <ClInclude Include="Meshes\square.h" />
     <ClInclude Include="Meshes\suzi_smooth.h" />
+    <ClInclude Include="Meshes\tree.h" />
     <ClInclude Include="Meshes\triangle.h" />
     <ClInclude Include="Observables\ObservableObject.h" />
     <ClInclude Include="Shaders\ShaderImporter.h" />
@@ -171,6 +183,8 @@
     <ClInclude Include="Drawables\DrawableObject.h" />
     <ClInclude Include="Shaders\FragmentShader.h" />
     <ClInclude Include="Meshes\Mesh.h" />
+    <ClInclude Include="Transforms\ContinuousRotationTransform.h" />
+    <ClInclude Include="Transforms\GeneralAxisRotationTransform.h" />
     <ClInclude Include="Transforms\RotationTransform.h" />
     <ClInclude Include="Transforms\ScaleTransform.h" />
     <ClInclude Include="Scene.h" />
@@ -185,8 +199,10 @@
   <ItemGroup>
     <None Include="Shaders\Definitions\fragmentShader.frag" />
     <None Include="Shaders\Definitions\fragmentShaderBlinn.frag" />
+    <None Include="Shaders\Definitions\fragmentShaderBlinnNoRing.frag" />
     <None Include="Shaders\Definitions\fragmentShaderLambert.frag" />
     <None Include="Shaders\Definitions\fragmentShaderPhong.frag" />
+    <None Include="Shaders\Definitions\fragmentShaderPhongNoRing.frag" />
     <None Include="Shaders\Definitions\fragmentShaderSolid.frag" />
     <None Include="Shaders\Definitions\vertexShader.vert" />
   </ItemGroup>

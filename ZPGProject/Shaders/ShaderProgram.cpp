@@ -6,6 +6,7 @@ ShaderProgram::ShaderProgram(std::shared_ptr<Camera> camera, VertexShader& verte
 	glAttachShader(_program, vertexShader.get());
 	glAttachShader(_program, fragmentShader.get());
 	_camera = camera;
+	_scene = nullptr;
 	_camera->subscribe(this);
 	Application::getInstance().subscribe(this);
 	link();
@@ -46,22 +47,41 @@ void ShaderProgram::checkStatus()
 	}
 }
 
-void ShaderProgram::setMatrixVariable(glm::mat4 matrix, std::string name)
+void ShaderProgram::setVariable(glm::mat4 matrix, std::string name)
 {
 	const GLint id = glGetUniformLocation(_program, name.c_str());
 	glProgramUniformMatrix4fv(_program, id, 1, GL_FALSE, value_ptr(matrix));
 }
 
-void ShaderProgram::setVec3Variable(glm::vec3 vector, std::string name)
+void ShaderProgram::setVariable(glm::vec3 vector, std::string name)
 {
 	const GLint id = glGetUniformLocation(_program, name.c_str());
 	glProgramUniform3fv(_program, id, 1, value_ptr(vector));
 }
 
-void ShaderProgram::setVec4Variable(glm::vec4 vector, std::string name)
+void ShaderProgram::setVariable(glm::vec4 vector, std::string name)
 {
 	const GLint id = glGetUniformLocation(_program, name.c_str());
 	glProgramUniform4fv(_program, id, 1, value_ptr(vector));
+}
+
+void ShaderProgram::setVariable(float value, std::string name)
+{
+	const GLint id = glGetUniformLocation(_program, name.c_str());
+	glProgramUniform1f(_program, id, value);
+}
+
+void ShaderProgram::setVariable(int value, std::string name)
+{
+	const GLint id = glGetUniformLocation(_program, name.c_str());
+	glProgramUniform1i(_program, id, value);
+}
+
+void ShaderProgram::setMaterial(Material& material)
+{
+	setVariable(material.getColor(), "objectColor");
+	setVariable(material.getSpecularStrength(), "specularStrength");
+	setVariable(material.getShininess(), "shininess");
 }
 
 void ShaderProgram::resetProgram()
@@ -71,24 +91,40 @@ void ShaderProgram::resetProgram()
 
 void ShaderProgram::onCameraPositionChanged(glm::vec3 position)
 {
-	setVec3Variable(position, "cameraPosition");
+	setVariable(position, "cameraPosition");
 }
 
 void ShaderProgram::onCameraProjectionMatrixChanged(glm::mat4 matrix)
 {
-	setMatrixVariable(matrix, "projectionMatrix");
+	setVariable(matrix, "projectionMatrix");
 }
 
 void ShaderProgram::onCameraViewMatrixChanged(glm::mat4 matrix)
 {
-	setMatrixVariable(matrix, "viewMatrix");
+	setVariable(matrix, "viewMatrix");
 }
 
 void ShaderProgram::onSceneChanged(Scene& scene)
 {
+	if (_scene != nullptr)
+		_scene->unsubscribe(this);
+	_scene = &scene;
+	scene.subscribe(this);
+
 	for (auto& light : scene.getLights())
 	{
-		setVec3Variable(light->_position, "lightPosition");
-		setVec4Variable(light->_color, "lightColor");
+		setVariable(light->getPosition(), "lightPosition");
+		setVariable(light->getColor(), "lightColor");
+		setVariable(light->getAttenuation(), "lightAttenuation");
+	}
+}
+
+void ShaderProgram::onSceneLightsChanged(std::vector<std::shared_ptr<Light>>& lights)
+{
+	for (auto& light : lights)
+	{
+		setVariable(light->getPosition(), "lightPosition");
+		setVariable(light->getColor(), "lightColor");
+		setVariable(light->getAttenuation(), "lightAttenuation");
 	}
 }

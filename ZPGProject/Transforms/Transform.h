@@ -8,4 +8,5 @@ protected:
 public:
 	virtual ~Transform() = default;
 	virtual glm::mat4 transform() = 0;
+	virtual void update();
 };

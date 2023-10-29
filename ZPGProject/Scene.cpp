@@ -24,6 +24,7 @@ void Scene::addDrawableObject(std::shared_ptr<DrawableObject> object)
 
 void Scene::addLight(std::shared_ptr<Light> light)
 {
+    light->subscribe(this);
     _lights.push_back(light);
 }
 
@@ -43,47 +44,103 @@ void Scene::draw()
 
 void Scene::onKey(GLFWwindow* window)
 {
-    Scene& s = Application::getInstance().getCurrentScene();
+    if (this != &Application::getInstance().getCurrentScene()) return;
+
     if (glfwGetKey(window, GLFW_KEY_RIGHT_BRACKET) == GLFW_PRESS) {
-        if (s.selectedObjectIndex < s._objects.size() - 1)
-            s.selectedObjectIndex++;
+        if (selectedObjectIndex < _objects.size() - 1)
+            selectedObjectIndex++;
         else
-            s.selectedObjectIndex = 0;
+            selectedObjectIndex = 0;
     }
 
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        s._objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0, 0.01f, 0 }));
+        _objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0, 0.01f, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        s._objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0, -0.01f, 0 }));
+        _objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0, -0.01f, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        s._objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ -0.01f, 0, 0 }));
+        _objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ -0.01f, 0, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        s._objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0.01f, 0, 0 }));
+        _objects[selectedObjectIndex]->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0.01f, 0, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
-        s._objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(-0.05f, glm::vec3{ 0, 1, 0 }));
+        _objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(-0.05f, glm::vec3{ 0, 1, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_BRACKET) == GLFW_PRESS)
-        s._objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(0.05f, glm::vec3{ 0, 1, 0 }));
+        _objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(0.05f, glm::vec3{ 0, 1, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-        s._objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(-0.05f, glm::vec3{ 1, 0, 0 }));
+        _objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(-0.05f, glm::vec3{ 1, 0, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_SEMICOLON) == GLFW_PRESS)
-        s._objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(0.05f, glm::vec3{ 1, 0, 0 }));
+        _objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(0.05f, glm::vec3{ 1, 0, 0 }));
 
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-        s._objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(0.05f, glm::vec3{ 0, 0, 1 }));
+        _objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(0.05f, glm::vec3{ 0, 0, 1 }));
 
     if (glfwGetKey(window, GLFW_KEY_APOSTROPHE) == GLFW_PRESS)
-        s._objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(-0.05f, glm::vec3{ 0, 0, 1 }));
+        _objects[selectedObjectIndex]->addTransform(std::make_shared<RotationTransform>(-0.05f, glm::vec3{ 0, 0, 1 }));
 
     if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
-        s._objects[selectedObjectIndex]->addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.9f, 0.9f, 0.9f }));
+        _objects[selectedObjectIndex]->addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.9f, 0.9f, 0.9f }));
 
     if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
-        s._objects[selectedObjectIndex]->addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 1.1f, 1.1f, 1.1f }));
+        _objects[selectedObjectIndex]->addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 1.1f, 1.1f, 1.1f }));
+
+    if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS)
+    {
+        glm::vec3 pos = _lights[0]->getPosition();
+        pos.y += 0.5;
+        _lights[0]->setPosition(pos);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+    {
+        glm::vec3 pos = _lights[0]->getPosition();
+        pos.y -= 0.5;
+        _lights[0]->setPosition(pos);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
+    {
+        glm::vec3 pos = _lights[0]->getPosition();
+        pos.x += 0.5;
+        _lights[0]->setPosition(pos);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
+    {
+        glm::vec3 pos = _lights[0]->getPosition();
+        pos.x -= 0.5;
+        _lights[0]->setPosition(pos);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS)
+    {
+        glm::vec3 pos = _lights[0]->getPosition();
+        pos.z += 0.5;
+        _lights[0]->setPosition(pos);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
+    {
+        glm::vec3 pos = _lights[0]->getPosition();
+        pos.z -= 0.5;
+        _lights[0]->setPosition(pos);
+    }
+}
+
+void Scene::onLightChanged()
+{
+    notify(0);
+}
+
+void Scene::notify(int message)
+{
+    for (auto& subscriber : _subscribers)
+    {
+        subscriber->onSceneLightsChanged(_lights);
+    }
 }

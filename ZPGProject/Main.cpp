@@ -6,6 +6,7 @@ int main(void)
 	app.initialize();
 	app.createShaders();
 	app.createModels();
+	app.createMaterials();
 	app.createScenes();
 	app.run();
 

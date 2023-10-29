@@ -7,12 +7,13 @@
 class CompositeTransform :
 	public Transform
 {
-private:
+protected:
 	std::vector<std::shared_ptr<Transform>> _transforms;
 public:
 	// Inherited via Transform
 	~CompositeTransform();
 	glm::mat4 transform() override;
+	void update() override;
 	CompositeTransform& addTransform(std::shared_ptr<Transform> transform);
 	CompositeTransform& addRotationTransform(float angle, glm::vec3 axis);
 	CompositeTransform& addScaleTransform(glm::vec3 scale);

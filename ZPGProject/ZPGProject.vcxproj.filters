@@ -111,6 +111,24 @@
     <ClCompile Include="Events\CameraEventHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Drawables\Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Transforms\GeneralAxisRotationTransform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Transforms\ContinuousRotationTransform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Transforms\Transform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\LightEventHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\SceneEventHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -200,6 +218,30 @@
     <ClInclude Include="Events\CameraEventHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Drawables\Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Transforms\GeneralAxisRotationTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Transforms\ContinuousRotationTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Meshes\gift.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Meshes\bushes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Meshes\tree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Events\LightEventHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Events\SceneEventHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Definitions\vertexShader.vert" />
@@ -208,5 +250,7 @@
     <None Include="Shaders\Definitions\fragmentShaderLambert.frag" />
     <None Include="Shaders\Definitions\fragmentShaderPhong.frag" />
     <None Include="Shaders\Definitions\fragmentShaderBlinn.frag" />
+    <None Include="Shaders\Definitions\fragmentShaderBlinnNoRing.frag" />
+    <None Include="Shaders\Definitions\fragmentShaderPhongNoRing.frag" />
   </ItemGroup>
 </Project>

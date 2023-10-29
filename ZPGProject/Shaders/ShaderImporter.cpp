@@ -9,8 +9,13 @@ std::string ShaderImporter::readFile(std::string fileName)
     if (!fileStream.is_open()) return "";
 
     std::string out((std::istreambuf_iterator<char>(fileStream)), (std::istreambuf_iterator<char>()));
-
     fileStream.close();
 
-    return out;
+    if (out[0] != '\xEF' && out[1] != '\xBB' && out[2] != '\xBF') {
+        return out;
+    }
+    else {
+        out.erase(0, 3);
+        return out;
+    }
 }

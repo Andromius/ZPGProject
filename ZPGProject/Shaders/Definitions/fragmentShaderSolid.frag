@@ -1,5 +1,6 @@
-#version 330
-out vec4 frag_colour;
+#version 400
+uniform vec4 objectColor;
+
 void main () {
-     frag_colour = vec4 (0.0, 1.0, 1.0, 1.0);
+     gl_FragColor = objectColor;
 }

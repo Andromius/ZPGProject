@@ -15,6 +15,14 @@ glm::mat4 CompositeTransform::transform()
 	return matrix;
 }
 
+void CompositeTransform::update()
+{
+	for (auto& transform : _transforms)
+	{
+		transform->update();
+	}
+}
+
 CompositeTransform& CompositeTransform::addTransform(std::shared_ptr<Transform> transform)
 {
 	_transforms.push_back(transform);

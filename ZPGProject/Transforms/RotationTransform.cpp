@@ -9,5 +9,5 @@ RotationTransform::RotationTransform(float angle, glm::vec3 axis)
 
 glm::mat4 RotationTransform::transform()
 {
-    return glm::rotate(matrix, _angle, _axis);
+    return glm::rotate(matrix, glm::radians(_angle), _axis);
 }
