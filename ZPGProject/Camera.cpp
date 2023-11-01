@@ -7,15 +7,17 @@ Camera::Camera(glm::vec3 eye, glm::vec3 target, glm::vec3 up, float fov, float s
 	_target = target;
 	_up = up;
 	_fov = fov;
-	_cursorPosX = window->getWidth() / float(2);
-	_cursorPosY = window->getHeight() / float(2);
 	_pitch = -90.f;
 	_yaw = -90.f;
 	_sens = sens;
 	_window = window;
 	_canTurn = false;
 	_window->subscribe(this);
-	onWindowSizeChanged(_window->getWidth(), _window->getHeight());
+
+	ScreenDimensions& dimensions = window->getDimensions();
+	_cursorPosX = dimensions.width / float(2);
+	_cursorPosY = dimensions.height / float(2);
+	onWindowSizeChanged(dimensions);
 }
 
 Camera::~Camera()
@@ -38,54 +40,61 @@ glm::vec3 Camera::getEye()
 	return _eye;
 }
 
-void Camera::onWindowSizeChanged(int width, int height)
+void Camera::onWindowSizeChanged(ScreenDimensions& dimensions)
 {
-	if (height == 0) return;
+	if (dimensions.height == 0) return;
 
-	_aspectRatio = float(width) / float(height);
-	notify(CAM_PROJ_MAT_CHANGED);
+	_aspectRatio = float(dimensions.width) / float(dimensions.height);
+	notifyA(&CameraEventHandler::onCameraProjectionMatrixChanged, getProjectionMatrix());
 }
 
 void Camera::onKey(GLFWwindow* window)
 {
 	float moveSpeed = 0.05f;
+	bool keyPressed = false;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		_eye.x += moveSpeed * cos(glm::radians(_yaw));
 		_eye.z += moveSpeed * sin(glm::radians(_yaw));
-		notify(CAM_POSITION_CHANGED | CAM_VIEW_MAT_CHANGED);
+		keyPressed = true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		_eye.x -= moveSpeed * cos(glm::radians(_yaw));
 		_eye.z -= moveSpeed * sin(glm::radians(_yaw));
-		notify(CAM_POSITION_CHANGED | CAM_VIEW_MAT_CHANGED);
+		keyPressed = true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
 		_eye.x -= moveSpeed * sin(glm::radians(_yaw));
 		_eye.z += moveSpeed * cos(glm::radians(_yaw));
-		notify(CAM_POSITION_CHANGED | CAM_VIEW_MAT_CHANGED);
+		keyPressed = true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
 		_eye.x += moveSpeed * sin(glm::radians(_yaw));
 		_eye.z -= moveSpeed * cos(glm::radians(_yaw));
-		notify(CAM_POSITION_CHANGED | CAM_VIEW_MAT_CHANGED);
+		keyPressed = true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
 		_eye.y += moveSpeed;
-		notify(CAM_POSITION_CHANGED | CAM_VIEW_MAT_CHANGED);
+		keyPressed = true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 	{
 		_eye.y -= moveSpeed;
-		notify(CAM_POSITION_CHANGED | CAM_VIEW_MAT_CHANGED);
+		keyPressed = true;
+	}
+
+	if (keyPressed)
+	{
+		notifyA<glm::vec3>(&CameraEventHandler::onCameraPositionChanged, getEye());
+		notifyA<glm::mat4>(&CameraEventHandler::onCameraViewMatrixChanged, getViewMatrix());
 	}
 }
 
-void Camera::onCursorPositionChanged(CursorPos cursorPos)
+void Camera::onCursorPositionChanged(CursorPos& cursorPos)
 {
 	if (!_canTurn) return;
 
@@ -105,7 +114,7 @@ void Camera::onCursorPositionChanged(CursorPos cursorPos)
 	_target.y = sin(glm::radians(_pitch));
 	_target.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
 
-	notify(CAM_VIEW_MAT_CHANGED);
+	notifyA(&CameraEventHandler::onCameraViewMatrixChanged, getViewMatrix());
 }
 
 void Camera::onMouseButton(GLFWwindow* window)
@@ -120,21 +129,5 @@ void Camera::onMouseButton(GLFWwindow* window)
 	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		_canTurn = false;
-	}
-
-}
-
-void Camera::notify(int message)
-{
-	for (auto& subscriber : _subscribers)
-	{
-		if (message & CAM_POSITION_CHANGED)
-			subscriber->onCameraPositionChanged(getEye());
-		
-		if (message & CAM_PROJ_MAT_CHANGED)
-			subscriber->onCameraProjectionMatrixChanged(getProjectionMatrix());
-
-		if (message & CAM_VIEW_MAT_CHANGED)
-			subscriber->onCameraViewMatrixChanged(getViewMatrix());
 	}
 }

@@ -12,24 +12,16 @@ Light::~Light()
 
 }
 
-void Light::notify(int message)
-{
-	for (auto& subscriber : _subscribers)
-	{
-		subscriber->onLightChanged();
-	}
-}
-
 void Light::setPosition(glm::vec3 position)
 {
 	_position = position;
-	notify(0);
+	notifyA(&LightEventHandler::onLightChanged);
 }
 
 void Light::setColor(glm::vec4 color)
 {
 	_color = color;
-	notify(0);
+	notifyA(&LightEventHandler::onLightChanged);
 }
 
 glm::vec3 Light::getPosition()

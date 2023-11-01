@@ -17,17 +17,17 @@ void main ( void )
 
 	vec3 halfwayDirection = normalize(lightDirection + cameraDirection);
 	
-	float spec = pow(max(dot(worldNormal, halfwayDirection), 0.0), shininess);
+	float spec = pow(max(dot(worldNormal, halfwayDirection), 0.0), 200);
 
 	vec4 specularColor = specularStrength * spec * lightColor;
 	
 	float diff = max(dot(lightDirection, worldNormal), 0.0);
 	
-	vec4 diffuseColor = diff * lightColor;
-	vec4 ambientColor = vec4( 0.1, 0.1, 0.1, 1.0);
+	vec4 diffuseColor = diff * lightColor * objectColor;
+	vec4 ambientColor = vec4( 0.1, 0.1, 0.1, 1.0) * objectColor;
 	
 	float distance = length(lightPosition - worldPosition);
 	float attenuation = 1.0 / (1.0 + lightAttenuation * distance * distance);
 
-	gl_FragColor = (ambientColor + attenuation * (diffuseColor + specularColor)) * objectColor;
+	gl_FragColor = (ambientColor + attenuation * (diffuseColor + specularColor));
 }

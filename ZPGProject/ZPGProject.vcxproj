@@ -167,6 +167,7 @@
     <ClInclude Include="Events\LightEventHandler.h" />
     <ClInclude Include="Events\Messages\Message.h" />
     <ClInclude Include="Events\SceneEventHandler.h" />
+    <ClInclude Include="Events\ScreenDimensions.h" />
     <ClInclude Include="Events\WindowEventHandler.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Meshes\bushes.h" />

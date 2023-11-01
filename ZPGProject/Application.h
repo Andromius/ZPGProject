@@ -45,8 +45,5 @@ public:
 	Scene& getCurrentScene();
 
 	void onKey(GLFWwindow* window) override;
-
-	// Inherited via ObservableObject
-	void notify(int message) override;
 };
 

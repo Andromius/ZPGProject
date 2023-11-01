@@ -7,7 +7,9 @@ class ObservableObject
 {
 protected:
 	std::vector<TEventHandler*> _subscribers;
-	virtual void notify(int message) = 0;
+	
+	template<typename... TArgs>
+	void notifyA(void (TEventHandler::* func)(TArgs...), TArgs... args);
 
 public:
 	void subscribe(TEventHandler* handler);
@@ -24,4 +26,14 @@ template<typename TEventHandler>
 inline void ObservableObject<TEventHandler>::unsubscribe(TEventHandler* handler)
 {
 	_subscribers.erase(std::remove_if(_subscribers.begin(), _subscribers.end(), [&](TEventHandler* h) { return h == handler; }));
+}
+
+template<typename TEventHandler>
+template<typename... TArgs>
+inline void ObservableObject<TEventHandler>::notifyA(void(TEventHandler::* func)(TArgs...), TArgs... args)
+{
+	for (auto& subscriber : _subscribers)
+	{
+		(subscriber->*func)(args...);
+	}
 }

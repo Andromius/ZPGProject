@@ -31,12 +31,9 @@ public:
 	glm::mat4 getProjectionMatrix();
 	glm::vec3 getEye();
 
-	void onWindowSizeChanged(int width, int height) override;
+	void onWindowSizeChanged(ScreenDimensions& dimensions) override;
 	void onKey(GLFWwindow* window) override;
-	void onCursorPositionChanged(CursorPos cursorPos) override;
+	void onCursorPositionChanged(CursorPos& cursorPos) override;
 	void onMouseButton(GLFWwindow* window) override;
-
-	// Inherited via ObservableObject
-	void notify(int message) override;
 };
 

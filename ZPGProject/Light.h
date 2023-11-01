@@ -15,8 +15,7 @@ private:
 public:
 	Light(glm::vec3 position, glm::vec4 color = glm::vec4(1,1,1,1), float attenuation = 0.05);
 	~Light();
-	// Inherited via ObservableObject
-	void notify(int message) override;
+
 	void setPosition(glm::vec3 position);
 	void setColor(glm::vec4 color);
 	glm::vec3 getPosition();

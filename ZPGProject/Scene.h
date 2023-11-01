@@ -28,8 +28,5 @@ public:
 	
 	void onKey(GLFWwindow* window) override;
 	void onLightChanged() override;
-
-	// Inherited via ObservableObject
-	void notify(int message) override;
 };
 

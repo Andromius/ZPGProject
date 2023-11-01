@@ -1,6 +1,6 @@
 #include "WindowEventHandler.h"
 
-void WindowEventHandler::onWindowSizeChanged(int width, int height)
+void WindowEventHandler::onWindowSizeChanged(ScreenDimensions& dimensions)
 {
 }
 
@@ -12,7 +12,7 @@ void WindowEventHandler::onWindowIconifyChanged(bool iconified)
 {
 }
 
-void WindowEventHandler::onCursorPositionChanged(CursorPos cursorPos)
+void WindowEventHandler::onCursorPositionChanged(CursorPos& cursorPos)
 {
 }
 

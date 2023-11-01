@@ -9,8 +9,7 @@ class Window :
 {
 private:
 	GLFWwindow* _window;
-	int _width;
-	int _height;
+	ScreenDimensions _dimensions;
 	bool _iconified;
 	bool _focused;
 
@@ -32,16 +31,13 @@ public:
 	
 	void setAsCurrentContext();
 	void setViewport();
+
 	#pragma region Getters
 	GLFWwindow* getGLFWWindow();
-	int getWidth();
-	int getHeight();
+	ScreenDimensions& getDimensions();
 	bool getIconified();
 	bool getFocused();
 	CursorPos getCursorPos();
 	#pragma endregion
-
-	// Inherited via ObservableObject
-	void notify(int message) override;
 };
 

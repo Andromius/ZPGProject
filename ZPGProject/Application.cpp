@@ -111,7 +111,7 @@ void Application::createScenes()
 	_scenes.push_back(createSceneC());
 	_scenes.push_back(createSceneD());
 	_scenes.push_back(createSceneE());
-	notify(APP_SCENE_CHANGED);
+	notifyA<Scene&>(&ApplicationEventHandler::onSceneChanged, getCurrentScene());
 }
 
 void Application::createMaterials()
@@ -160,16 +160,7 @@ void Application::onKey(GLFWwindow* window)
 	{
 		if (_currentScene < _scenes.size() - 1) _currentScene++;
 		else _currentScene = 0;
-		notify(APP_SCENE_CHANGED);
-	}
-}
-
-void Application::notify(int message)
-{
-	for (auto& subscriber : _subscribers)
-	{
-		if (message & APP_SCENE_CHANGED)
-			subscriber->onSceneChanged(getCurrentScene());
+		notifyA<Scene&>(&ApplicationEventHandler::onSceneChanged, getCurrentScene());
 	}
 }
 
@@ -216,7 +207,7 @@ std::shared_ptr<Scene> Application::createSceneB()
 		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.2f, 0.2f, 0.2f }));
 	scene->addDrawableObject(sphereD);
 
-	scene->addLight(std::make_shared<Light>(glm::vec3(0, 0, 0), glm::vec4(1), 0));
+	scene->addLight(std::make_shared<Light>(glm::vec3(0, 0, 0), glm::vec4(1,1,1,1), 0));
 
 	return scene;
 }
@@ -286,7 +277,7 @@ std::shared_ptr<Scene> Application::createSceneD()
 	scene->addDrawableObject(venus);
 
 	// Create Earth
-	std::shared_ptr<DrawableObject> earth = std::make_shared<DrawableObject>(_meshes["sphere"], _shaderPrograms["phongProgram"], _materials["earthBlue"]);
+	std::shared_ptr<DrawableObject> earth = std::make_shared<DrawableObject>(_meshes["sphere"], _shaderPrograms["phongNoRingProgram"], _materials["earthBlue"]);
 	earth->addTransform(std::make_shared<TranslateTransform>(glm::vec3(0, 0, -4.0))) // Adjust distance from the Sun
 		.addTransform(std::make_shared<ScaleTransform>(glm::vec3(0.05f, 0.05f, 0.05f))); // Adjust scale
 	earth->addTransform(std::make_shared<GeneralAxisRotationTransform>(sun, earth->getModelMatrix(), glm::vec3(0, 1, 0), 0, 0.2f)); // Adjust speed
@@ -342,7 +333,7 @@ std::shared_ptr<Scene> Application::createSceneE()
 {
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>(_window);
 
-	std::shared_ptr<DrawableObject> ground = std::make_shared<DrawableObject>(_meshes["square"], _shaderPrograms["phongProgram"], _materials["default"]);
+	std::shared_ptr<DrawableObject> ground = std::make_shared<DrawableObject>(_meshes["square"], _shaderPrograms["solidProgram"], _materials["default"]);
 	ground->addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 200, 0, 200 }))
 		.addTransform(std::make_shared<RotationTransform>(90, glm::vec3(1, 0, 0)));
 	scene->addDrawableObject(ground);
@@ -355,7 +346,7 @@ std::shared_ptr<Scene> Application::createSceneE()
 		float scaleFactor = float(rand()) / RAND_MAX;
 		std::string meshNames[4] = { "tree", "bush", "gift", "suziSmooth"};
 		std::string chosenName = meshNames[rand() % 4];
-		std::shared_ptr<DrawableObject> obj = std::make_shared<DrawableObject>(_meshes[chosenName], _shaderPrograms["phongProgram"], _materials["default"]);
+		std::shared_ptr<DrawableObject> obj = std::make_shared<DrawableObject>(_meshes[chosenName], _shaderPrograms["blinnProgram"], _materials["default"]);
 		obj->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ x, 0, z }))
 			.addTransform(std::make_shared<RotationTransform>(angle, glm::vec3(0, 1, 0)))
 			.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ scaleFactor, scaleFactor, scaleFactor }));
