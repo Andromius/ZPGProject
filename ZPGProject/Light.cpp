@@ -15,13 +15,13 @@ Light::~Light()
 void Light::setPosition(glm::vec3 position)
 {
 	_position = position;
-	notifyA(&LightEventHandler::onLightChanged);
+	notify(&LightEventHandler::onLightChanged);
 }
 
 void Light::setColor(glm::vec4 color)
 {
 	_color = color;
-	notifyA(&LightEventHandler::onLightChanged);
+	notify(&LightEventHandler::onLightChanged);
 }
 
 glm::vec3 Light::getPosition()

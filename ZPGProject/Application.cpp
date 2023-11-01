@@ -111,7 +111,7 @@ void Application::createScenes()
 	_scenes.push_back(createSceneC());
 	_scenes.push_back(createSceneD());
 	_scenes.push_back(createSceneE());
-	notifyA<Scene&>(&ApplicationEventHandler::onSceneChanged, getCurrentScene());
+	notify<Scene&>(&ApplicationEventHandler::onSceneChanged, getCurrentScene());
 }
 
 void Application::createMaterials()
@@ -160,7 +160,7 @@ void Application::onKey(GLFWwindow* window)
 	{
 		if (_currentScene < _scenes.size() - 1) _currentScene++;
 		else _currentScene = 0;
-		notifyA<Scene&>(&ApplicationEventHandler::onSceneChanged, getCurrentScene());
+		notify<Scene&>(&ApplicationEventHandler::onSceneChanged, getCurrentScene());
 	}
 }
 

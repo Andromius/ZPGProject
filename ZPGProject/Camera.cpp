@@ -45,7 +45,7 @@ void Camera::onWindowSizeChanged(ScreenDimensions& dimensions)
 	if (dimensions.height == 0) return;
 
 	_aspectRatio = float(dimensions.width) / float(dimensions.height);
-	notifyA(&CameraEventHandler::onCameraProjectionMatrixChanged, getProjectionMatrix());
+	notify(&CameraEventHandler::onCameraProjectionMatrixChanged, getProjectionMatrix());
 }
 
 void Camera::onKey(GLFWwindow* window)
@@ -89,8 +89,8 @@ void Camera::onKey(GLFWwindow* window)
 
 	if (keyPressed)
 	{
-		notifyA<glm::vec3>(&CameraEventHandler::onCameraPositionChanged, getEye());
-		notifyA<glm::mat4>(&CameraEventHandler::onCameraViewMatrixChanged, getViewMatrix());
+		notify<glm::vec3>(&CameraEventHandler::onCameraPositionChanged, getEye());
+		notify<glm::mat4>(&CameraEventHandler::onCameraViewMatrixChanged, getViewMatrix());
 	}
 }
 
@@ -114,7 +114,7 @@ void Camera::onCursorPositionChanged(CursorPos& cursorPos)
 	_target.y = sin(glm::radians(_pitch));
 	_target.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
 
-	notifyA(&CameraEventHandler::onCameraViewMatrixChanged, getViewMatrix());
+	notify(&CameraEventHandler::onCameraViewMatrixChanged, getViewMatrix());
 }
 
 void Camera::onMouseButton(GLFWwindow* window)

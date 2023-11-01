@@ -134,5 +134,5 @@ void Scene::onKey(GLFWwindow* window)
 
 void Scene::onLightChanged()
 {
-    notifyA<std::vector<std::shared_ptr<Light>>&>(&SceneEventHandler::onSceneLightsChanged, _lights);
+    notify<std::vector<std::shared_ptr<Light>>&>(&SceneEventHandler::onSceneLightsChanged, _lights);
 }

@@ -29,7 +29,7 @@ void Window::glfwOnSizeChanged(GLFWwindow* window, int width, int height)
 	w->_dimensions.width = width;
 	w->_dimensions.height = height;
 	w->setViewport();
-	w->notifyA<ScreenDimensions&>(&WindowEventHandler::onWindowSizeChanged, w->_dimensions);
+	w->notify<ScreenDimensions&>(&WindowEventHandler::onWindowSizeChanged, w->_dimensions);
 }
 
 void Window::glfwOnIconifyChanged(GLFWwindow* window, int iconified)
@@ -38,7 +38,7 @@ void Window::glfwOnIconifyChanged(GLFWwindow* window, int iconified)
 	if (w == nullptr) return;
 
 	w->_iconified = iconified;
-	w->notifyA(&WindowEventHandler::onWindowIconifyChanged, w->_iconified);
+	w->notify(&WindowEventHandler::onWindowIconifyChanged, w->_iconified);
 }
 
 void Window::glfwOnFocusedChanged(GLFWwindow* window, int focused)
@@ -47,7 +47,7 @@ void Window::glfwOnFocusedChanged(GLFWwindow* window, int focused)
 	if (w == nullptr) return;
 
 	w->_focused = focused;
-	w->notifyA(&WindowEventHandler::onWindowFocusChanged, w->_focused);
+	w->notify(&WindowEventHandler::onWindowFocusChanged, w->_focused);
 }
 
 void Window::glfwOnMouseButton(GLFWwindow* window, int button, int action, int mode)
@@ -55,7 +55,7 @@ void Window::glfwOnMouseButton(GLFWwindow* window, int button, int action, int m
 	Window* w = (Window*)(glfwGetWindowUserPointer(window));
 	if (w == nullptr) return;
 
-	w->notifyA(&WindowEventHandler::onMouseButton, w->_window);
+	w->notify(&WindowEventHandler::onMouseButton, w->_window);
 }
 
 void Window::glfwOnCursorPosChanged(GLFWwindow* window, double x, double y)
@@ -65,7 +65,7 @@ void Window::glfwOnCursorPosChanged(GLFWwindow* window, double x, double y)
 
 	w->_cursorPos.x = x;
 	w->_cursorPos.y = y;
-	w->notifyA<CursorPos&>(&WindowEventHandler::onCursorPositionChanged, w->_cursorPos);
+	w->notify<CursorPos&>(&WindowEventHandler::onCursorPositionChanged, w->_cursorPos);
 }
 
 void Window::glfwOnKey(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -75,7 +75,7 @@ void Window::glfwOnKey(GLFWwindow* window, int key, int scancode, int action, in
 	
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		w->close();
-	w->notifyA(&WindowEventHandler::onKey, w->_window);
+	w->notify(&WindowEventHandler::onKey, w->_window);
 }
 
 

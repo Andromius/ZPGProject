@@ -9,7 +9,7 @@ protected:
 	std::vector<TEventHandler*> _subscribers;
 	
 	template<typename... TArgs>
-	void notifyA(void (TEventHandler::* func)(TArgs...), TArgs... args);
+	void notify(void (TEventHandler::* func)(TArgs...), TArgs... args);
 
 public:
 	void subscribe(TEventHandler* handler);
@@ -30,7 +30,7 @@ inline void ObservableObject<TEventHandler>::unsubscribe(TEventHandler* handler)
 
 template<typename TEventHandler>
 template<typename... TArgs>
-inline void ObservableObject<TEventHandler>::notifyA(void(TEventHandler::* func)(TArgs...), TArgs... args)
+inline void ObservableObject<TEventHandler>::notify(void(TEventHandler::* func)(TArgs...), TArgs... args)
 {
 	for (auto& subscriber : _subscribers)
 	{
