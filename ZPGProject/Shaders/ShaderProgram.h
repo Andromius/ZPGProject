@@ -20,7 +20,8 @@ private:
 	GLuint _program;
 	std::shared_ptr<Camera> _camera;
 	Scene* _scene;
-
+	
+	void setLightVariables(std::shared_ptr<Light> light, int i);
 public:
 	ShaderProgram(std::shared_ptr<Camera> camera, VertexShader& vertexShader, FragmentShader& fragmentShader);
 	~ShaderProgram();
@@ -43,5 +44,8 @@ public:
 	void onCameraViewMatrixChanged(glm::mat4 matrix) override;
 
 	void onSceneChanged(Scene& scene) override;
-	void onSceneLightsChanged(std::vector<std::shared_ptr<Light>>& lights) override;
+	
+	void onSceneLightPositionChanged(int index, glm::vec3 position) override;
+	void onSceneLightColorChanged(int index, glm::vec4 color) override;
+	void onSceneLightDirectionChanged(int index, glm::vec3 direction) override;
 };

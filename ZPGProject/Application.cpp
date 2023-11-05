@@ -12,6 +12,9 @@
 #include "Shaders/FragmentShader.h"
 #include "Shaders/VertexShader.h"
 #include <Transforms/GeneralAxisRotationTransform.h>
+#include <Lights/PointLight.h>
+#include <Lights/DirectionalLight.h>
+#include <Lights/SpotLight.h>
 
 Application& Application::getInstance()
 {
@@ -30,7 +33,7 @@ void Application::initialize()
 	_shaderPrograms = std::map<std::string, std::shared_ptr<ShaderProgram>>();
 	_scenes = std::vector<std::shared_ptr<Scene>>();
 	_meshes = std::map<std::string, std::shared_ptr<Mesh>>();
-	_currentScene = 1;
+	_currentScene = 2;
 
 	glfwSetErrorCallback(onError);
 
@@ -42,6 +45,8 @@ void Application::initialize()
 	_window = std::make_shared<Window>(800, 600, "ZPG", nullptr, nullptr);
 	//_camera = std::make_shared<Camera>(glm::vec3(0, 0, 2), glm::vec3(0, 0, -4), glm::vec3(0, 1, 0), 60.0f, 0.05f, _window);
 	_camera = std::make_shared<Camera>(glm::vec3(0, 8, -3), glm::vec3(0, -45, 4), glm::vec3(0, 1, 0), 60.0f, 0.05f, _window);
+	_cameraLight = std::make_shared<SpotLight>(15.f, 10.f, glm::vec3(0, 0, -2), glm::vec3(0, 0, 1), glm::vec4(1, 1, 1, 1), 0, 1);
+	_camera->attachLight(_cameraLight);
 	_window->subscribe(this);
 
 	if (!_window->getGLFWWindow()) {
@@ -111,6 +116,11 @@ void Application::createScenes()
 	_scenes.push_back(createSceneC());
 	_scenes.push_back(createSceneD());
 	_scenes.push_back(createSceneE());
+	for (auto& scene : _scenes)
+	{
+		scene->addLight(_cameraLight);
+	}
+
 	notify<Scene&>(&ApplicationEventHandler::onSceneChanged, getCurrentScene());
 }
 
@@ -118,33 +128,29 @@ void Application::createMaterials()
 {
 	_materials.insert(std::make_pair("default", std::make_shared<Material>()));
 	_materials.insert(std::make_pair("redShiny", std::make_shared<Material>(glm::vec4(1, 0, 0, 1))));
-	_materials.insert(std::make_pair("greenShiny", std::make_shared<Material>(glm::vec4(0, 1, 0, 1))));
+	_materials.insert(std::make_pair("greenShiny", std::make_shared<Material>(glm::vec4(0, 1, 0, 1), 1, 32)));
 	_materials.insert(std::make_pair("blueShiny", std::make_shared<Material>(glm::vec4(0, 0, 1, 1))));
 	_materials.insert(std::make_pair("yellowShiny", std::make_shared<Material>(glm::vec4(1, 1, 0, 1))));
 	_materials.insert(std::make_pair("blueShiny32", std::make_shared<Material>(glm::vec4(0, 0, 1, 1), 1, 32)));
 	
-	_materials.insert(std::make_pair("mercuryGray", std::make_shared<Material>(glm::vec4(0.6627, 0.6627, 0.6627, 1))));
-	_materials.insert(std::make_pair("venusOrange", std::make_shared<Material>(glm::vec4(1.0, 0.6471, 0.0, 1))));
-	_materials.insert(std::make_pair("earthBlue", std::make_shared<Material>(glm::vec4(0.0, 0.0, 1.0, 1))));
-	_materials.insert(std::make_pair("marsReddishOrange", std::make_shared<Material>(glm::vec4(1.0, 0.2706, 0.0, 1))));
-	_materials.insert(std::make_pair("jupiterLightOrange", std::make_shared<Material>(glm::vec4(1.0, 0.5451, 0.2706, 1))));
-	_materials.insert(std::make_pair("saturnPaleYellow", std::make_shared<Material>(glm::vec4(1.0, 0.8941, 0.7098, 1))));
-	_materials.insert(std::make_pair("uranusLightBlue", std::make_shared<Material>(glm::vec4(0.6784, 0.8471, 0.902, 1))));
-	_materials.insert(std::make_pair("neptuneDeepBlue", std::make_shared<Material>(glm::vec4(0.1176, 0.5647, 1.0, 1))));
-	_materials.insert(std::make_pair("plutoGray", std::make_shared<Material>(glm::vec4(0.502, 0.502, 0.502, 1))));
-	_materials.insert(std::make_pair("moonGray", std::make_shared<Material>(glm::vec4(0.7, 0.7, 0.7, 1.0))));
-	_materials.insert(std::make_pair("blackHoleDarkGray", std::make_shared<Material>(glm::vec4(0.1, 0.1, 0.1, 1.0))));
+	_materials.insert(std::make_pair("mercuryGray", std::make_shared<Material>(glm::vec4(0.6627, 0.6627, 0.6627, 1), 1, 32)));
+	_materials.insert(std::make_pair("venusOrange", std::make_shared<Material>(glm::vec4(1.0, 0.6471, 0.0, 1), 1, 32)));
+	_materials.insert(std::make_pair("earthBlue", std::make_shared<Material>(glm::vec4(0.0, 0.0, 1.0, 1), 1, 1)));
+	_materials.insert(std::make_pair("marsReddishOrange", std::make_shared<Material>(glm::vec4(1.0, 0.2706, 0.0, 1), 1, 32)));
+	_materials.insert(std::make_pair("jupiterLightOrange", std::make_shared<Material>(glm::vec4(1.0, 0.5451, 0.2706, 1), 1, 32)));
+	_materials.insert(std::make_pair("saturnPaleYellow", std::make_shared<Material>(glm::vec4(1.0, 0.8941, 0.7098, 1), 1, 32)));
+	_materials.insert(std::make_pair("uranusLightBlue", std::make_shared<Material>(glm::vec4(0.6784, 0.8471, 0.902, 1), 1, 32)));
+	_materials.insert(std::make_pair("neptuneDeepBlue", std::make_shared<Material>(glm::vec4(0.1176, 0.5647, 1.0, 1), 1, 32)));
+	_materials.insert(std::make_pair("plutoGray", std::make_shared<Material>(glm::vec4(0.502, 0.502, 0.502, 1), 1, 32)));
+	_materials.insert(std::make_pair("moonGray", std::make_shared<Material>(glm::vec4(0.7, 0.7, 0.7, 1.0), 1, 32)));
+	_materials.insert(std::make_pair("blackHoleDarkGray", std::make_shared<Material>(glm::vec4(0.1, 0.1, 0.1, 1.0), 1, 32)));
 }
 
 void Application::run()
 {
 	while (!glfwWindowShouldClose(_window->getGLFWWindow())) {
-		// clear color and depth buffer
-
 		_scenes[_currentScene]->draw();
-		// update other events like input handling
 		glfwPollEvents();
-		// put the stuff we’ve been drawing onto the display
 		glfwSwapBuffers(_window->getGLFWWindow());
 	}
 }
@@ -178,7 +184,7 @@ std::shared_ptr<Scene> Application::createSceneA()
 		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.2f, 0.2f, 0.2f }));
 	scene->addDrawableObject(sphereA);
 
-	scene->addLight(std::make_shared<Light>(glm::vec3(0, 0, 0)));
+	scene->addLight(std::make_shared<PointLight>(glm::vec3(0, 0, 0)));
 
 	return scene;
 }
@@ -207,7 +213,11 @@ std::shared_ptr<Scene> Application::createSceneB()
 		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.2f, 0.2f, 0.2f }));
 	scene->addDrawableObject(sphereD);
 
-	scene->addLight(std::make_shared<Light>(glm::vec3(0, 0, 0), glm::vec4(1,1,1,1), 0));
+	std::shared_ptr<DrawableObject> sphereE = std::make_shared<DrawableObject>(_meshes["sphere"], _shaderPrograms["phongProgram"], _materials["blueShiny32"]);
+	sphereE->addTransform(std::make_shared<TranslateTransform>(glm::vec3(0.0f, 0.0f, 2.5f)));
+	scene->addDrawableObject(sphereE);
+
+	scene->addLight(std::make_shared<PointLight>(glm::vec3(0, 0, 1), glm::vec4(1, 0, 0, 1), 0, 1));
 
 	return scene;
 }
@@ -228,12 +238,12 @@ std::shared_ptr<Scene> Application::createSceneC()
 		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 2, 2, 2 }));
 	scene->addDrawableObject(o2);
 
-	std::shared_ptr<DrawableObject> suzi = std::make_shared<DrawableObject>(_meshes["suziFlat"], _shaderPrograms["lambertProgram"], _materials["default"]);
+	std::shared_ptr<DrawableObject> suzi = std::make_shared<DrawableObject>(_meshes["suziFlat"], _shaderPrograms["lambertProgram"], _materials["blueShiny32"]);
 	suzi->addTransform(std::make_shared<TranslateTransform>(glm::vec3(0.5f, 0, 0)))
 		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ .2f, .2f, .2f }));
 	scene->addDrawableObject(suzi);
 
-	std::shared_ptr<DrawableObject> suzi2 = std::make_shared<DrawableObject>(_meshes["suziSmooth"], _shaderPrograms["blinnProgram"], _materials["default"]);
+	std::shared_ptr<DrawableObject> suzi2 = std::make_shared<DrawableObject>(_meshes["suziSmooth"], _shaderPrograms["phongProgram"], _materials["default"]);
 	suzi2->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ 0, 0.5, 0}))
 		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ .2f, .2f, .2f }));
 	scene->addDrawableObject(suzi2);
@@ -243,12 +253,12 @@ std::shared_ptr<Scene> Application::createSceneC()
 		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.2f, 0.2f, 0.2f }));
 	scene->addDrawableObject(sphereObj);
 
-	std::shared_ptr<DrawableObject> sphereObj2 = std::make_shared<DrawableObject>(_meshes["sphere"], _shaderPrograms["blinnProgram"], _materials["default"]);
+	std::shared_ptr<DrawableObject> sphereObj2 = std::make_shared<DrawableObject>(_meshes["sphere"], _shaderPrograms["phongProgram"], _materials["default"]);
 	sphereObj2->addTransform(std::make_shared<TranslateTransform>(glm::vec3(0.0f, -0.5f, 0.0f)))
 		.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 0.2f, 0.2f, 0.2f }));
 	scene->addDrawableObject(sphereObj2);
 
-	scene->addLight(std::make_shared<Light>(glm::vec3(0, 0, 0)));
+	scene->addLight(std::make_shared<PointLight>(glm::vec3(0, 0, 0), glm::vec4(1), 0, 1));
 
 	return scene;
 }
@@ -324,7 +334,7 @@ std::shared_ptr<Scene> Application::createSceneD()
 	neptune->addTransform(std::make_shared<GeneralAxisRotationTransform>(sun, neptune->getModelMatrix(), glm::vec3(0, 1, 0), 0, 0.001f)); // Adjust speed
 	scene->addDrawableObject(neptune);
 
-	scene->addLight(std::make_shared<Light>(glm::vec3(0, 0, -3)));
+	scene->addLight(std::make_shared<PointLight>(glm::vec3(0, 0, -3), glm::vec4(1), 0.05f, 0.5f));
 
 	return scene;
 }
@@ -333,7 +343,7 @@ std::shared_ptr<Scene> Application::createSceneE()
 {
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>(_window);
 
-	std::shared_ptr<DrawableObject> ground = std::make_shared<DrawableObject>(_meshes["square"], _shaderPrograms["solidProgram"], _materials["default"]);
+	std::shared_ptr<DrawableObject> ground = std::make_shared<DrawableObject>(_meshes["square"], _shaderPrograms["solidProgram"], _materials["greenShiny"]);
 	ground->addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 200, 0, 200 }))
 		.addTransform(std::make_shared<RotationTransform>(90, glm::vec3(1, 0, 0)));
 	scene->addDrawableObject(ground);
@@ -346,14 +356,14 @@ std::shared_ptr<Scene> Application::createSceneE()
 		float scaleFactor = float(rand()) / RAND_MAX;
 		std::string meshNames[4] = { "tree", "bush", "gift", "suziSmooth"};
 		std::string chosenName = meshNames[rand() % 4];
-		std::shared_ptr<DrawableObject> obj = std::make_shared<DrawableObject>(_meshes[chosenName], _shaderPrograms["blinnProgram"], _materials["default"]);
+		std::shared_ptr<DrawableObject> obj = std::make_shared<DrawableObject>(_meshes[chosenName], _shaderPrograms["blinnProgram"], _materials["greenShiny"]);
 		obj->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ x, 0, z }))
 			.addTransform(std::make_shared<RotationTransform>(angle, glm::vec3(0, 1, 0)))
 			.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ scaleFactor, scaleFactor, scaleFactor }));
 		scene->addDrawableObject(obj);
 	}
-
-	scene->addLight(std::make_shared<Light>(glm::vec3(0, 10, 0), glm::vec4(1), 0));
+	
+	scene->addLight(std::make_shared<PointLight>(glm::vec3(0, 5, 0), glm::vec4(1), 0, 0.5));
 
 	return scene;
 }

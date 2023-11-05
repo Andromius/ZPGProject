@@ -40,6 +40,13 @@ glm::vec3 Camera::getEye()
 	return _eye;
 }
 
+void Camera::attachLight(std::shared_ptr<SpotLight> light)
+{
+	_light = light;
+	_light->setPosition(getEye());
+	_light->setDirection(_target);
+}
+
 void Camera::onWindowSizeChanged(ScreenDimensions& dimensions)
 {
 	if (dimensions.height == 0) return;
@@ -89,8 +96,9 @@ void Camera::onKey(GLFWwindow* window)
 
 	if (keyPressed)
 	{
-		notify<glm::vec3>(&CameraEventHandler::onCameraPositionChanged, getEye());
-		notify<glm::mat4>(&CameraEventHandler::onCameraViewMatrixChanged, getViewMatrix());
+		_light->setPosition(_eye);
+		notify(&CameraEventHandler::onCameraPositionChanged, getEye());
+		notify(&CameraEventHandler::onCameraViewMatrixChanged, getViewMatrix());
 	}
 }
 
@@ -114,6 +122,7 @@ void Camera::onCursorPositionChanged(CursorPos& cursorPos)
 	_target.y = sin(glm::radians(_pitch));
 	_target.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
 
+	_light->setDirection(_target);
 	notify(&CameraEventHandler::onCameraViewMatrixChanged, getViewMatrix());
 }
 

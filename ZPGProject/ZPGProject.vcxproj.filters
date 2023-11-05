@@ -99,7 +99,7 @@
     <ClCompile Include="Shaders\ShaderImporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Light.cpp">
+    <ClCompile Include="Lights\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Events\WindowEventHandler.cpp">
@@ -127,6 +127,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Events\SceneEventHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Lights\PointLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Lights\DirectionalLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Lights\SpotLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -206,7 +215,7 @@
     <ClInclude Include="Events\CursorPos.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Light.h">
+    <ClInclude Include="Lights\Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Events\WindowEventHandler.h">
@@ -243,6 +252,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Events\ScreenDimensions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lights\PointLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lights\DirectionalLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lights\LightType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lights\SpotLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

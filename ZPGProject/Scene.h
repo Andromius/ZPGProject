@@ -3,8 +3,8 @@
 #include "Meshes/Mesh.h"
 #include "Drawables/DrawableObject.h"
 #include "Window.h"
-#include "Light.h"
 #include <Events/SceneEventHandler.h>
+#include <Lights/Light.h>
 
 class Scene : 
 	public WindowEventHandler,
@@ -17,6 +17,8 @@ private:
 	std::vector<std::shared_ptr<DrawableObject>> _objects;
 	std::vector<std::shared_ptr<Light>> _lights;
 
+	int getLightIndex(void* ptr);
+
 public:
 	Scene(std::shared_ptr<Window> window);
 	~Scene();
@@ -27,6 +29,9 @@ public:
 	void draw();
 	
 	void onKey(GLFWwindow* window) override;
-	void onLightChanged() override;
+
+	void onLightColorChanged(glm::vec4 color, void* ptr) override;
+	void onLightPositionChanged(glm::vec3 position, void* ptr) override;
+	void onLightDirectionChanged(glm::vec3 direction, void* ptr) override;
 };
 

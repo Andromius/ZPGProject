@@ -4,6 +4,7 @@
 #include <memory>
 #include "Window.h"
 #include "Events/CameraEventHandler.h"
+#include <Lights/SpotLight.h>
 
 
 class Camera : 
@@ -12,6 +13,7 @@ class Camera :
 {
 private:
 	std::shared_ptr<Window> _window;
+	std::shared_ptr<SpotLight> _light;
 	glm::vec3 _eye;
 	glm::vec3 _target;
 	glm::vec3 _up;
@@ -30,6 +32,8 @@ public:
 	glm::mat4 getViewMatrix();
 	glm::mat4 getProjectionMatrix();
 	glm::vec3 getEye();
+
+	void attachLight(std::shared_ptr<SpotLight> light);
 
 	void onWindowSizeChanged(ScreenDimensions& dimensions) override;
 	void onKey(GLFWwindow* window) override;

@@ -138,7 +138,10 @@
     <ClCompile Include="Events\LightEventHandler.cpp" />
     <ClCompile Include="Events\SceneEventHandler.cpp" />
     <ClCompile Include="Events\WindowEventHandler.cpp" />
-    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Lights\DirectionalLight.cpp" />
+    <ClCompile Include="Lights\Light.cpp" />
+    <ClCompile Include="Lights\PointLight.cpp" />
+    <ClCompile Include="Lights\SpotLight.cpp" />
     <ClCompile Include="Shaders\ShaderImporter.cpp" />
     <ClCompile Include="Transforms\CompositeTransform.cpp" />
     <ClCompile Include="Drawables\DrawableObject.cpp" />
@@ -169,7 +172,11 @@
     <ClInclude Include="Events\SceneEventHandler.h" />
     <ClInclude Include="Events\ScreenDimensions.h" />
     <ClInclude Include="Events\WindowEventHandler.h" />
-    <ClInclude Include="Light.h" />
+    <ClInclude Include="Lights\DirectionalLight.h" />
+    <ClInclude Include="Lights\Light.h" />
+    <ClInclude Include="Lights\LightType.h" />
+    <ClInclude Include="Lights\PointLight.h" />
+    <ClInclude Include="Lights\SpotLight.h" />
     <ClInclude Include="Meshes\bushes.h" />
     <ClInclude Include="Meshes\gift.h" />
     <ClInclude Include="Meshes\plain.h" />

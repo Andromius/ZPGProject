@@ -1,5 +1,12 @@
 #include "ShaderProgram.h"
 #include "Application.h"
+#include <format>
+#include <iostream>
+#include <Lights/PointLight.h>
+#include <Lights/DirectionalLight.h>
+#include <Lights/LightType.h>
+#include <Lights/SpotLight.h>
+
 ShaderProgram::ShaderProgram(std::shared_ptr<Camera> camera, VertexShader& vertexShader, FragmentShader& fragmentShader)
 {
 	_program = glCreateProgram();
@@ -104,27 +111,63 @@ void ShaderProgram::onCameraViewMatrixChanged(glm::mat4 matrix)
 	setVariable(matrix, "viewMatrix");
 }
 
+void ShaderProgram::setLightVariables(std::shared_ptr<Light> light, int i)
+{
+	setVariable(light->getColor(), "lights[" + std::to_string(i) + "].color");
+	setVariable(light->getDiffuseStrength(), "lights[" + std::to_string(i) + "].diffuseStrength");
+
+	std::shared_ptr<PointLight> pLight = std::dynamic_pointer_cast<PointLight>(light);
+	if (pLight)
+	{
+		setVariable(pLight->getPosition(), "lights[" + std::to_string(i) + "].position");
+		setVariable(pLight->getAttenuation(), "lights[" + std::to_string(i) + "].attenuation");
+		std::shared_ptr<SpotLight> sLight = std::dynamic_pointer_cast<SpotLight>(pLight);
+		if (sLight)
+		{
+			setVariable(sLight->getAngle(), "lights[" + std::to_string(i) + "].angle");
+			setVariable(sLight->getAngleFadeStart(), "lights[" + std::to_string(i) + "].angleFadeStart");
+			setVariable(sLight->getDirection(), "lights[" + std::to_string(i) + "].direction");
+			setVariable(LightType::SPOT, "lights[" + std::to_string(i) + "].type");
+		}
+		else
+			setVariable(LightType::POINT, "lights[" + std::to_string(i) + "].type");
+	}
+
+	std::shared_ptr<DirectionalLight> dLight = std::dynamic_pointer_cast<DirectionalLight>(light);
+	if (dLight)
+	{
+		setVariable(dLight->getDirection(), "lights[" + std::to_string(i) + "].direction");
+		setVariable(LightType::DIRECTIONAL, "lights[" + std::to_string(i) + "].type");
+	}
+}
+
 void ShaderProgram::onSceneChanged(Scene& scene)
 {
 	if (_scene != nullptr)
 		_scene->unsubscribe(this);
 	_scene = &scene;
-	scene.subscribe(this);
 
-	for (auto& light : scene.getLights())
+	scene.subscribe(this);
+	std::vector<std::shared_ptr<Light>> lights = scene.getLights();
+	setVariable((int)lights.size(), "numberOfLights");
+
+	for (size_t i = 0; i < lights.size(); i++)
 	{
-		setVariable(light->getPosition(), "lightPosition");
-		setVariable(light->getColor(), "lightColor");
-		setVariable(light->getAttenuation(), "lightAttenuation");
+		setLightVariables(lights[i], i);
 	}
 }
 
-void ShaderProgram::onSceneLightsChanged(std::vector<std::shared_ptr<Light>>& lights)
+void ShaderProgram::onSceneLightPositionChanged(int index, glm::vec3 position)
 {
-	for (auto& light : lights)
-	{
-		setVariable(light->getPosition(), "lightPosition");
-		setVariable(light->getColor(), "lightColor");
-		setVariable(light->getAttenuation(), "lightAttenuation");
-	}
+	setVariable(position, "lights[" + std::to_string(index) + "].position");
+}
+
+void ShaderProgram::onSceneLightColorChanged(int index, glm::vec4 color)
+{
+	setVariable(color, "lights[" + std::to_string(index) + "].color");
+}
+
+void ShaderProgram::onSceneLightDirectionChanged(int index, glm::vec3 direction)
+{
+	setVariable(direction, "lights[" + std::to_string(index) + "].direction");
 }

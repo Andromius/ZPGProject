@@ -23,6 +23,7 @@ private:
 	std::vector<std::shared_ptr<Scene>> _scenes;
 	std::map<std::string, std::shared_ptr<Mesh>> _meshes;
 	std::shared_ptr<Camera> _camera;
+	std::shared_ptr<SpotLight> _cameraLight;
 	std::map<std::string, std::shared_ptr<ShaderProgram>> _shaderPrograms;
 	std::map<std::string, std::shared_ptr<Material>> _materials;
 

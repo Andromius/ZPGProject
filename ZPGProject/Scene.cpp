@@ -3,6 +3,13 @@
 #include "Transforms/RotationTransform.h"
 #include "Transforms/ScaleTransform.h"
 #include "Application.h"
+#include <Lights/PointLight.h>
+
+int Scene::getLightIndex(void* ptr)
+{
+    return std::distance(_lights.begin(),
+        std::find_if(_lights.begin(), _lights.end(), [&](std::shared_ptr<Light> l) { return l.get() == ptr; }));
+}
 
 Scene::Scene(std::shared_ptr<Window> window)
 {
@@ -89,50 +96,84 @@ void Scene::onKey(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
         _objects[selectedObjectIndex]->addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 1.1f, 1.1f, 1.1f }));
 
-    if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS)
     {
-        glm::vec3 pos = _lights[0]->getPosition();
-        pos.y += 0.5;
-        _lights[0]->setPosition(pos);
+        std::shared_ptr<PointLight> light = std::dynamic_pointer_cast<PointLight>(_lights[0]);
+        if (light)
+        {
+            glm::vec3 pos = light->getPosition();
+            pos.y += 0.5;
+            light->setPosition(pos);
+        }
     }
 
-    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS)
     {
-        glm::vec3 pos = _lights[0]->getPosition();
-        pos.y -= 0.5;
-        _lights[0]->setPosition(pos);
+        std::shared_ptr<PointLight> light = std::dynamic_pointer_cast<PointLight>(_lights[0]);
+        if (light)
+        {
+            glm::vec3 pos = light->getPosition();
+            pos.y -= 0.5;
+            light->setPosition(pos);
+        }
     }
 
-    if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS)
     {
-        glm::vec3 pos = _lights[0]->getPosition();
-        pos.x += 0.5;
-        _lights[0]->setPosition(pos);
+        std::shared_ptr<PointLight> light = std::dynamic_pointer_cast<PointLight>(_lights[0]);
+        if (light)
+        {
+            glm::vec3 pos = light->getPosition();
+            pos.x += 0.5;
+            light->setPosition(pos);
+        }
     }
 
-    if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS)
     {
-        glm::vec3 pos = _lights[0]->getPosition();
-        pos.x -= 0.5;
-        _lights[0]->setPosition(pos);
+        std::shared_ptr<PointLight> light = std::dynamic_pointer_cast<PointLight>(_lights[0]);
+        if (light)
+        {
+            glm::vec3 pos = light->getPosition();
+            pos.x -= 0.5;
+            light->setPosition(pos);
+        }
     }
 
-    if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_KP_7) == GLFW_PRESS)
     {
-        glm::vec3 pos = _lights[0]->getPosition();
-        pos.z += 0.5;
-        _lights[0]->setPosition(pos);
+        std::shared_ptr<PointLight> light = std::dynamic_pointer_cast<PointLight>(_lights[0]);
+        if (light)
+        {
+            glm::vec3 pos = light->getPosition();
+            pos.z += 0.5;
+            light->setPosition(pos);
+        }
     }
 
-    if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_KP_9) == GLFW_PRESS)
     {
-        glm::vec3 pos = _lights[0]->getPosition();
-        pos.z -= 0.5;
-        _lights[0]->setPosition(pos);
+        std::shared_ptr<PointLight> light = std::dynamic_pointer_cast<PointLight>(_lights[0]);
+        if (light)
+        {
+            glm::vec3 pos = light->getPosition();
+            pos.z -= 0.5;
+            light->setPosition(pos);
+        }
     }
 }
 
-void Scene::onLightChanged()
+void Scene::onLightColorChanged(glm::vec4 color, void* ptr)
 {
-    notify<std::vector<std::shared_ptr<Light>>&>(&SceneEventHandler::onSceneLightsChanged, _lights);
+    notify(&SceneEventHandler::onSceneLightColorChanged, getLightIndex(ptr), color);
+}
+
+void Scene::onLightPositionChanged(glm::vec3 position, void* ptr)
+{
+    notify(&SceneEventHandler::onSceneLightPositionChanged, getLightIndex(ptr), position);
+}
+
+void Scene::onLightDirectionChanged(glm::vec3 direction, void* ptr)
+{
+    notify(&SceneEventHandler::onSceneLightDirectionChanged, getLightIndex(ptr), direction);
 }
