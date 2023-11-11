@@ -1,5 +1,4 @@
 #include "Camera.h"
-#include "Events/Messages/Message.h"
 
 Camera::Camera(glm::vec3 eye, glm::vec3 target, glm::vec3 up, float fov, float sens, std::shared_ptr<Window> window)
 {

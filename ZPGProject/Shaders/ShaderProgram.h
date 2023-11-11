@@ -5,6 +5,7 @@
 #include "VertexShader.h"
 #include "FragmentShader.h"
 #include "Camera.h"
+#include "Drawables/Texture.h"
 #include "Events/ApplicationEventHandler.h"
 #include "Drawables/Material.h"
 #include "Events/CameraEventHandler.h"
@@ -36,6 +37,7 @@ public:
 	void setVariable(int value, std::string name);
 	
 	void setMaterial(Material& material);
+	void setTexture(Texture& texture);
 	
 	static void resetProgram();
 

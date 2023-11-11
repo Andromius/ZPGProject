@@ -138,6 +138,12 @@
     <ClCompile Include="Lights\SpotLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Meshes\TextureMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Drawables\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -209,9 +215,6 @@
     <ClInclude Include="Shaders\ShaderImporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Events\Messages\Message.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Events\CursorPos.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -266,6 +269,12 @@
     <ClInclude Include="Lights\SpotLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Meshes\TextureMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Drawables\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Definitions\vertexShader.vert" />
@@ -276,5 +285,7 @@
     <None Include="Shaders\Definitions\fragmentShaderBlinn.frag" />
     <None Include="Shaders\Definitions\fragmentShaderBlinnNoRing.frag" />
     <None Include="Shaders\Definitions\fragmentShaderPhongNoRing.frag" />
+    <None Include="Shaders\Definitions\textureTest.frag" />
+    <None Include="Shaders\Definitions\textureTest.vert" />
   </ItemGroup>
 </Project>

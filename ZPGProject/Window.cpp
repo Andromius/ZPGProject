@@ -1,5 +1,4 @@
 #include "Window.h"
-#include "Events/Messages/Message.h"
 
 void Window::initializeEvents()
 {

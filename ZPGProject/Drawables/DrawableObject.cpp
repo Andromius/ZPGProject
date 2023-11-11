@@ -14,12 +14,19 @@ DrawableObject& DrawableObject::addTransform(std::shared_ptr<Transform> transfor
 	return *this;
 }
 
+void DrawableObject::setTexture(std::shared_ptr<Texture> texture)
+{
+	_texture = texture;
+}
+
 void DrawableObject::draw()
 {
 	_program->useProgram();
 	_transform->update();
 	_program->setVariable(_transform->transform(), "modelMatrix");
 	_program->setMaterial(*_material);
+	if (_texture != nullptr)
+		_program->setTexture(*_texture);
 	_mesh->draw();
 	ShaderProgram::resetProgram();
 }

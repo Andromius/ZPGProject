@@ -4,7 +4,7 @@
 
 class Mesh
 {
-private:
+protected:
 	GLuint VBO;
 	GLuint VAO;
 	int pointCount;
@@ -12,6 +12,7 @@ private:
 public:
 	Mesh(std::vector<std::vector<std::vector<float>>> points);
 	Mesh(std::vector<float> points);
+	Mesh() = default;
 	void draw();
 };
 

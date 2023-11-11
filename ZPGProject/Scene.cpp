@@ -1,5 +1,4 @@
 #include "Scene.h"
-#include "Events/Messages/Message.h"
 #include "Transforms/RotationTransform.h"
 #include "Transforms/ScaleTransform.h"
 #include "Application.h"

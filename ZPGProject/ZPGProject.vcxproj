@@ -76,13 +76,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\marti\Desktop\ZPG\ZPGProject\ZPGProject;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glew-2.1.0-win32\glew-2.1.0\include;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glew-2.1.0-win32\glew-2.1.0;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glm-0.9.9.8\glm;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glfw-3.3.8.bin.WIN32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\marti\Desktop\ZPG\ZPGProject\ZPGProject;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glew-2.1.0-win32\glew-2.1.0\include;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glew-2.1.0-win32\glew-2.1.0;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glm-0.9.9.8\glm;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glfw-3.3.8.bin.WIN32\include;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\soil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32.lib;opengl32.lib;glu32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glew-2.1.0-win32\glew-2.1.0\lib\Release\Win32;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glew-2.1.0-win32\glew-2.1.0\bin\Release\Win32;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glew-2.1.0-win32\glew-2.1.0\include;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glfw-3.3.8.bin.WIN32\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;opengl32.lib;glu32.lib;glfw3.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glew-2.1.0-win32\glew-2.1.0\lib\Release\Win32;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glew-2.1.0-win32\glew-2.1.0\bin\Release\Win32;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glew-2.1.0-win32\glew-2.1.0\include;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\glfw-3.3.8.bin.WIN32\lib-vc2022;C:\Users\marti\Desktop\ZPG\ZPGProject\lib\soil\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -133,6 +133,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Drawables\Material.cpp" />
+    <ClCompile Include="Drawables\Texture.cpp" />
     <ClCompile Include="Events\ApplicationEventHandler.cpp" />
     <ClCompile Include="Events\CameraEventHandler.cpp" />
     <ClCompile Include="Events\LightEventHandler.cpp" />
@@ -142,6 +143,7 @@
     <ClCompile Include="Lights\Light.cpp" />
     <ClCompile Include="Lights\PointLight.cpp" />
     <ClCompile Include="Lights\SpotLight.cpp" />
+    <ClCompile Include="Meshes\TextureMesh.cpp" />
     <ClCompile Include="Shaders\ShaderImporter.cpp" />
     <ClCompile Include="Transforms\CompositeTransform.cpp" />
     <ClCompile Include="Drawables\DrawableObject.cpp" />
@@ -164,11 +166,11 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Drawables\Material.h" />
+    <ClInclude Include="Drawables\Texture.h" />
     <ClInclude Include="Events\ApplicationEventHandler.h" />
     <ClInclude Include="Events\CameraEventHandler.h" />
     <ClInclude Include="Events\CursorPos.h" />
     <ClInclude Include="Events\LightEventHandler.h" />
-    <ClInclude Include="Events\Messages\Message.h" />
     <ClInclude Include="Events\SceneEventHandler.h" />
     <ClInclude Include="Events\ScreenDimensions.h" />
     <ClInclude Include="Events\WindowEventHandler.h" />
@@ -183,6 +185,7 @@
     <ClInclude Include="Meshes\sphere.h" />
     <ClInclude Include="Meshes\square.h" />
     <ClInclude Include="Meshes\suzi_smooth.h" />
+    <ClInclude Include="Meshes\TextureMesh.h" />
     <ClInclude Include="Meshes\tree.h" />
     <ClInclude Include="Meshes\triangle.h" />
     <ClInclude Include="Observables\ObservableObject.h" />
@@ -212,6 +215,8 @@
     <None Include="Shaders\Definitions\fragmentShaderPhong.frag" />
     <None Include="Shaders\Definitions\fragmentShaderPhongNoRing.frag" />
     <None Include="Shaders\Definitions\fragmentShaderSolid.frag" />
+    <None Include="Shaders\Definitions\textureTest.frag" />
+    <None Include="Shaders\Definitions\textureTest.vert" />
     <None Include="Shaders\Definitions\vertexShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

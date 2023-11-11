@@ -91,6 +91,12 @@ void ShaderProgram::setMaterial(Material& material)
 	setVariable(material.getShininess(), "shininess");
 }
 
+void ShaderProgram::setTexture(Texture& texture)
+{
+	setVariable(texture.getTextureUnitId(), "textureUnitID");
+	setVariable(texture.getSamplingConstant(), "samplingConstant");
+}
+
 void ShaderProgram::resetProgram()
 {
 	glUseProgram(0);

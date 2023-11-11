@@ -5,6 +5,7 @@
 #include <typeinfo>
 #include <memory>
 #include "Material.h"
+#include "Texture.h"
 
 class DrawableObject
 {
@@ -13,9 +14,11 @@ private:
 	std::unique_ptr<CompositeTransform> _transform;
 	std::shared_ptr<ShaderProgram> _program;
 	std::shared_ptr<Material> _material;
+	std::shared_ptr<Texture> _texture;
 public:
 	DrawableObject(std::shared_ptr<Mesh> _mesh, std::shared_ptr<ShaderProgram> _program, std::shared_ptr<Material> material);
 	DrawableObject& addTransform(std::shared_ptr<Transform> transform);
+	void setTexture(std::shared_ptr<Texture> texture);
 	void draw();
 	glm::mat4 getModelMatrix();
 };

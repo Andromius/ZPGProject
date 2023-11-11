@@ -7,7 +7,7 @@ Material::Material(glm::vec4 color, float specularStrength, int shininess)
 	_shininess = shininess;
 }
 
-glm::vec4 Material::getColor()
+glm::vec4& Material::getColor()
 {
 	return _color;
 }

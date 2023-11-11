@@ -7,6 +7,7 @@ int main(void)
 	app.createShaders();
 	app.createModels();
 	app.createMaterials();
+	app.loadTextures();
 	app.createScenes();
 	app.run();
 

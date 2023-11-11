@@ -51,6 +51,8 @@ Mesh::Mesh(std::vector<float> points)
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * step, (GLvoid*)(sizeof(float) * (step / 2)));
 }
 
+
+
 void Mesh::draw()
 {
 	glBindVertexArray(VAO);

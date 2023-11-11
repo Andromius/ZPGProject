@@ -6,8 +6,8 @@
 #include "Meshes/bushes.h"
 #include "Meshes/tree.h"
 #include "Meshes/gift.h"
+#include "Meshes/triangle.h"
 #include "Shaders/ShaderImporter.h"
-#include "Events/Messages/Message.h"
 #include "Shaders/Shader.h"  
 #include "Shaders/FragmentShader.h"
 #include "Shaders/VertexShader.h"
@@ -15,6 +15,7 @@
 #include <Lights/PointLight.h>
 #include <Lights/DirectionalLight.h>
 #include <Lights/SpotLight.h>
+#include <Meshes/TextureMesh.h>
 
 Application& Application::getInstance()
 {
@@ -33,7 +34,8 @@ void Application::initialize()
 	_shaderPrograms = std::map<std::string, std::shared_ptr<ShaderProgram>>();
 	_scenes = std::vector<std::shared_ptr<Scene>>();
 	_meshes = std::map<std::string, std::shared_ptr<Mesh>>();
-	_currentScene = 2;
+	_textures = std::map<std::string, std::shared_ptr<Texture>>();
+	_currentScene = 4;
 
 	glfwSetErrorCallback(onError);
 
@@ -84,6 +86,8 @@ void Application::createShaders()
 	FragmentShader lambert("fragmentShaderLambert");
 	FragmentShader blinn("fragmentShaderBlinn");
 	FragmentShader blinnNoRing("fragmentShaderBlinnNoRing");
+	VertexShader texTestVert("textureTest");
+	FragmentShader texTestFrag("textureTest");
 
 	_shaderPrograms.insert(std::make_pair("phongProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, phong)));
 	_shaderPrograms.insert(std::make_pair("lambertProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, lambert)));
@@ -91,6 +95,7 @@ void Application::createShaders()
 	_shaderPrograms.insert(std::make_pair("blinnProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, blinn)));
 	_shaderPrograms.insert(std::make_pair("blinnNoRingProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, blinnNoRing)));
 	_shaderPrograms.insert(std::make_pair("phongNoRingProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, phongNoRing)));
+	_shaderPrograms.insert(std::make_pair("textureTest", std::make_shared<ShaderProgram>(_camera, vertexShader, texTestFrag)));
 	
 	for (auto& shaderProgram : _shaderPrograms)
 	{
@@ -107,6 +112,7 @@ void Application::createModels()
 	_meshes.insert(std::make_pair("bush", std::make_shared<Mesh>(std::vector<float>(std::begin(bushes), std::end(bushes)))));
 	_meshes.insert(std::make_pair("tree", std::make_shared<Mesh>(std::vector<float>(std::begin(tree), std::end(tree)))));
 	_meshes.insert(std::make_pair("gift", std::make_shared<Mesh>(std::vector<float>(std::begin(gift), std::end(gift)))));
+	_meshes.insert(std::make_pair("texTriangle", std::make_shared<TextureMesh>(std::vector<float>(std::begin(triangle), std::end(triangle)))));
 }
 
 void Application::createScenes()
@@ -116,6 +122,7 @@ void Application::createScenes()
 	_scenes.push_back(createSceneC());
 	_scenes.push_back(createSceneD());
 	_scenes.push_back(createSceneE());
+	_scenes.push_back(createSceneF());
 	for (auto& scene : _scenes)
 	{
 		scene->addLight(_cameraLight);
@@ -144,6 +151,11 @@ void Application::createMaterials()
 	_materials.insert(std::make_pair("plutoGray", std::make_shared<Material>(glm::vec4(0.502, 0.502, 0.502, 1), 1, 32)));
 	_materials.insert(std::make_pair("moonGray", std::make_shared<Material>(glm::vec4(0.7, 0.7, 0.7, 1.0), 1, 32)));
 	_materials.insert(std::make_pair("blackHoleDarkGray", std::make_shared<Material>(glm::vec4(0.1, 0.1, 0.1, 1.0), 1, 32)));
+}
+
+void Application::loadTextures()
+{
+	_textures.insert(std::make_pair("default", std::make_shared<Texture>("C:\\Users\\marti\\Desktop\\ZPG\\multipletextures\\grass.png")));
 }
 
 void Application::run()
@@ -343,9 +355,11 @@ std::shared_ptr<Scene> Application::createSceneE()
 {
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>(_window);
 
-	std::shared_ptr<DrawableObject> ground = std::make_shared<DrawableObject>(_meshes["square"], _shaderPrograms["solidProgram"], _materials["greenShiny"]);
+	std::shared_ptr<DrawableObject> ground = std::make_shared<DrawableObject>(_meshes["texTriangle"], _shaderPrograms["textureTest"], _materials["default"]);
 	ground->addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 200, 0, 200 }))
 		.addTransform(std::make_shared<RotationTransform>(90, glm::vec3(1, 0, 0)));
+	_textures["default"]->setSamplingConstant(100);
+	ground->setTexture(_textures["default"]);
 	scene->addDrawableObject(ground);
 
 	for (size_t i = 0; i < 1000; i++)
@@ -365,5 +379,14 @@ std::shared_ptr<Scene> Application::createSceneE()
 	
 	scene->addLight(std::make_shared<PointLight>(glm::vec3(0, 5, 0), glm::vec4(1), 0, 0.5));
 
+	return scene;
+}
+std::shared_ptr<Scene> Application::createSceneF()
+{
+	std::shared_ptr<Scene> scene = std::make_shared<Scene>(_window);
+	std::shared_ptr<DrawableObject> textTr = std::make_shared<DrawableObject>(_meshes["texTriangle"], _shaderPrograms["textureTest"], _materials["default"]);
+	textTr->addTransform(std::make_shared<RotationTransform>(90, glm::vec3(1,0,0)));
+	textTr->setTexture(_textures["default"]);
+	scene->addDrawableObject(textTr);
 	return scene;
 }

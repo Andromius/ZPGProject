@@ -5,6 +5,7 @@
 #include <map>
 
 #include "Shaders/ShaderProgram.h"
+#include "Drawables/Texture.h"
 
 #include "Scene.h"
 #include "Events/WindowEventHandler.h"
@@ -26,6 +27,8 @@ private:
 	std::shared_ptr<SpotLight> _cameraLight;
 	std::map<std::string, std::shared_ptr<ShaderProgram>> _shaderPrograms;
 	std::map<std::string, std::shared_ptr<Material>> _materials;
+	std::map<std::string, std::shared_ptr<Texture>> _textures;
+
 
 	static void onError(int error, const char* description);
 	std::shared_ptr<Scene> createSceneA();
@@ -33,6 +36,7 @@ private:
 	std::shared_ptr<Scene> createSceneC();
 	std::shared_ptr<Scene> createSceneD();
 	std::shared_ptr<Scene> createSceneE();
+	std::shared_ptr<Scene> createSceneF();
 
 public:
 	static Application& getInstance();
@@ -42,6 +46,7 @@ public:
 	void createModels();
 	void createScenes();
 	void createMaterials();
+	void loadTextures();
 	void run();
 	Scene& getCurrentScene();
 
