@@ -15,6 +15,7 @@ private:
 	size_t selectedObjectIndex = 0;
 	std::shared_ptr<Window> _window;
 	std::vector<std::shared_ptr<DrawableObject>> _objects;
+	std::shared_ptr<DrawableObject> _skybox;
 	std::vector<std::shared_ptr<Light>> _lights;
 
 	int getLightIndex(void* ptr);
@@ -27,6 +28,7 @@ public:
 	void addLight(std::shared_ptr<Light> light);
 	std::vector<std::shared_ptr<Light>> getLights();
 	void draw();
+	void setSkybox(std::shared_ptr<DrawableObject> skybox);
 	
 	void onKey(GLFWwindow* window) override;
 

@@ -144,6 +144,12 @@
     <ClCompile Include="Drawables\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Drawables\SkyboxTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Meshes\SkyboxMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -275,6 +281,15 @@
     <ClInclude Include="Drawables\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Drawables\SkyboxTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Meshes\SkyboxMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Meshes\skycube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Definitions\vertexShader.vert" />
@@ -287,5 +302,7 @@
     <None Include="Shaders\Definitions\fragmentShaderPhongNoRing.frag" />
     <None Include="Shaders\Definitions\textureTest.frag" />
     <None Include="Shaders\Definitions\textureTest.vert" />
+    <None Include="Shaders\Definitions\vertexShaderSkybox.vert" />
+    <None Include="Shaders\Definitions\fragmentShaderSkybox.frag" />
   </ItemGroup>
 </Project>

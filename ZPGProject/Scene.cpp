@@ -42,10 +42,18 @@ std::vector<std::shared_ptr<Light>> Scene::getLights()
 void Scene::draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if(_skybox)
+        _skybox->draw();
+    glClear(GL_DEPTH_BUFFER_BIT);
 	for (auto& object : _objects)
 	{
 		object->draw();
 	}
+}
+
+void Scene::setSkybox(std::shared_ptr<DrawableObject> skybox)
+{
+    _skybox = skybox;
 }
 
 void Scene::onKey(GLFWwindow* window)

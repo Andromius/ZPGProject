@@ -7,6 +7,7 @@
 #include "Meshes/tree.h"
 #include "Meshes/gift.h"
 #include "Meshes/triangle.h"
+#include "Meshes/skycube.h"
 #include "Shaders/ShaderImporter.h"
 #include "Shaders/Shader.h"  
 #include "Shaders/FragmentShader.h"
@@ -16,6 +17,8 @@
 #include <Lights/DirectionalLight.h>
 #include <Lights/SpotLight.h>
 #include <Meshes/TextureMesh.h>
+#include <Meshes/SkyboxMesh.h>
+#include <Drawables/SkyboxTexture.h>
 
 Application& Application::getInstance()
 {
@@ -88,6 +91,8 @@ void Application::createShaders()
 	FragmentShader blinnNoRing("fragmentShaderBlinnNoRing");
 	VertexShader texTestVert("textureTest");
 	FragmentShader texTestFrag("textureTest");
+	VertexShader skyboxVert("vertexShaderSkybox");
+	FragmentShader skyboxFrag("fragmentShaderSkybox");
 
 	_shaderPrograms.insert(std::make_pair("phongProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, phong)));
 	_shaderPrograms.insert(std::make_pair("lambertProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, lambert)));
@@ -96,6 +101,7 @@ void Application::createShaders()
 	_shaderPrograms.insert(std::make_pair("blinnNoRingProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, blinnNoRing)));
 	_shaderPrograms.insert(std::make_pair("phongNoRingProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, phongNoRing)));
 	_shaderPrograms.insert(std::make_pair("textureTest", std::make_shared<ShaderProgram>(_camera, vertexShader, texTestFrag)));
+	_shaderPrograms.insert(std::make_pair("skybox", std::make_shared<ShaderProgram>(_camera, skyboxVert, skyboxFrag)));
 	
 	for (auto& shaderProgram : _shaderPrograms)
 	{
@@ -113,6 +119,7 @@ void Application::createModels()
 	_meshes.insert(std::make_pair("tree", std::make_shared<Mesh>(std::vector<float>(std::begin(tree), std::end(tree)))));
 	_meshes.insert(std::make_pair("gift", std::make_shared<Mesh>(std::vector<float>(std::begin(gift), std::end(gift)))));
 	_meshes.insert(std::make_pair("texTriangle", std::make_shared<TextureMesh>(std::vector<float>(std::begin(triangle), std::end(triangle)))));
+	_meshes.insert(std::make_pair("skybox", std::make_shared<SkyboxMesh>(std::vector<float>(std::begin(skycube), std::end(skycube)))));
 }
 
 void Application::createScenes()
@@ -156,6 +163,13 @@ void Application::createMaterials()
 void Application::loadTextures()
 {
 	_textures.insert(std::make_pair("default", std::make_shared<Texture>("C:\\Users\\marti\\Desktop\\ZPG\\multipletextures\\grass.png")));
+	_textures.insert(std::make_pair("skybox", std::make_shared<SkyboxTexture>(
+		"C:\\Users\\marti\\Desktop\\cubemap\\posx.jpg",
+		"C:\\Users\\marti\\Desktop\\cubemap\\negx.jpg",
+		"C:\\Users\\marti\\Desktop\\cubemap\\posy.jpg",
+		"C:\\Users\\marti\\Desktop\\cubemap\\negy.jpg",
+		"C:\\Users\\marti\\Desktop\\cubemap\\posz.jpg",
+		"C:\\Users\\marti\\Desktop\\cubemap\\negz.jpg")));
 }
 
 void Application::run()
@@ -361,6 +375,10 @@ std::shared_ptr<Scene> Application::createSceneE()
 	_textures["default"]->setSamplingConstant(100);
 	ground->setTexture(_textures["default"]);
 	scene->addDrawableObject(ground);
+
+	std::shared_ptr<DrawableObject> skybox = std::make_shared<DrawableObject>(_meshes["skybox"], _shaderPrograms["skybox"], _materials["default"]);
+	skybox->setTexture(_textures["skybox"]);
+	scene->setSkybox(skybox);
 
 	for (size_t i = 0; i < 1000; i++)
 	{

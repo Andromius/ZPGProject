@@ -3,10 +3,11 @@
 #include <GL/glew.h>
 class Texture
 {
-private:
+protected:
 	GLuint _textureId;
 	int _textureUnitId;
 	int _samplingConstant;
+	Texture();
 
 
 public:

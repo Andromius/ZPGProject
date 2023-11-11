@@ -133,6 +133,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Drawables\Material.cpp" />
+    <ClCompile Include="Drawables\SkyboxTexture.cpp" />
     <ClCompile Include="Drawables\Texture.cpp" />
     <ClCompile Include="Events\ApplicationEventHandler.cpp" />
     <ClCompile Include="Events\CameraEventHandler.cpp" />
@@ -143,6 +144,7 @@
     <ClCompile Include="Lights\Light.cpp" />
     <ClCompile Include="Lights\PointLight.cpp" />
     <ClCompile Include="Lights\SpotLight.cpp" />
+    <ClCompile Include="Meshes\SkyboxMesh.cpp" />
     <ClCompile Include="Meshes\TextureMesh.cpp" />
     <ClCompile Include="Shaders\ShaderImporter.cpp" />
     <ClCompile Include="Transforms\CompositeTransform.cpp" />
@@ -166,6 +168,7 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Drawables\Material.h" />
+    <ClInclude Include="Drawables\SkyboxTexture.h" />
     <ClInclude Include="Drawables\Texture.h" />
     <ClInclude Include="Events\ApplicationEventHandler.h" />
     <ClInclude Include="Events\CameraEventHandler.h" />
@@ -182,6 +185,8 @@
     <ClInclude Include="Meshes\bushes.h" />
     <ClInclude Include="Meshes\gift.h" />
     <ClInclude Include="Meshes\plain.h" />
+    <ClInclude Include="Meshes\SkyboxMesh.h" />
+    <ClInclude Include="Meshes\skycube.h" />
     <ClInclude Include="Meshes\sphere.h" />
     <ClInclude Include="Meshes\square.h" />
     <ClInclude Include="Meshes\suzi_smooth.h" />
@@ -214,10 +219,12 @@
     <None Include="Shaders\Definitions\fragmentShaderLambert.frag" />
     <None Include="Shaders\Definitions\fragmentShaderPhong.frag" />
     <None Include="Shaders\Definitions\fragmentShaderPhongNoRing.frag" />
+    <None Include="Shaders\Definitions\fragmentShaderSkybox.frag" />
     <None Include="Shaders\Definitions\fragmentShaderSolid.frag" />
     <None Include="Shaders\Definitions\textureTest.frag" />
     <None Include="Shaders\Definitions\textureTest.vert" />
     <None Include="Shaders\Definitions\vertexShader.vert" />
+    <None Include="Shaders\Definitions\vertexShaderSkybox.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

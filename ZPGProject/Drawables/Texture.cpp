@@ -1,6 +1,10 @@
 #include "Texture.h"
 #include <SOIL.h>
 
+Texture::Texture()
+{
+}
+
 Texture::Texture(std::string filePath)
 {
 	//Bind the first texture to the first texture unit.
