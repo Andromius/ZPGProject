@@ -9,7 +9,12 @@ SkyboxTexture::SkyboxTexture(std::string filePathX, std::string filePathXNeg, st
 	//2D texture
 	_textureId = SOIL_load_OGL_cubemap(filePathX.c_str(), filePathXNeg.c_str(), filePathY.c_str(), filePathYNeg.c_str(), filePathZ.c_str(), filePathZNeg.c_str(),
 		SOIL_LOAD_RGB, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-	glBindTexture(GL_TEXTURE_2D, _textureId);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _textureId);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+}
+
+void SkyboxTexture::bind()
+{
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _textureId);
 }

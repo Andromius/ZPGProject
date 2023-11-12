@@ -17,4 +17,5 @@ public:
 
 	void setSamplingConstant(int newSamplingConstant);
 	int getSamplingConstant();
+	virtual void bind();
 };

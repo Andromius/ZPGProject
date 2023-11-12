@@ -37,3 +37,8 @@ int Texture::getSamplingConstant()
 {
 	return _samplingConstant;
 }
+
+void Texture::bind()
+{
+	glBindTexture(GL_TEXTURE_2D, _textureId);
+}

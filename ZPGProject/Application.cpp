@@ -77,6 +77,7 @@ void Application::initialize()
 	printf("Using GLFW %i.%i.%i\n", major, minor, revision);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 }
 

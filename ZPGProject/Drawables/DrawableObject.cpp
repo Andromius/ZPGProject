@@ -26,7 +26,10 @@ void DrawableObject::draw()
 	_program->setVariable(_transform->transform(), "modelMatrix");
 	_program->setMaterial(*_material);
 	if (_texture != nullptr)
+	{
+		_texture->bind();
 		_program->setTexture(*_texture);
+	}
 	_mesh->draw();
 	ShaderProgram::resetProgram();
 }
