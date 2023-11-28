@@ -156,7 +156,7 @@ void ShaderProgram::onSceneChanged(Scene& scene)
 	scene.subscribe(this);
 	std::vector<std::shared_ptr<Light>> lights = scene.getLights();
 	setVariable((int)lights.size(), "numberOfLights");
-
+	setVariable(scene.getAmbientColorFactor(), "ambientColorFactor");
 	for (size_t i = 0; i < lights.size(); i++)
 	{
 		setLightVariables(lights[i], i);

@@ -8,6 +8,7 @@ protected:
 	GLuint VBO;
 	GLuint VAO;
 	int pointCount;
+	int step;
 
 public:
 	Mesh(std::vector<std::vector<std::vector<float>>> points);

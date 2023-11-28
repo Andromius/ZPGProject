@@ -2,7 +2,7 @@
 
 Mesh::Mesh(std::vector<std::vector<std::vector<float>>> pointsArr)
 {
-	int step = pointsArr[0].size() * pointsArr[0][0].size();
+	step = pointsArr[0].size() * pointsArr[0][0].size();
 	pointCount = pointsArr.size();
 	std::vector<float> points;
 	for (auto& pointArr : pointsArr)
@@ -33,7 +33,7 @@ Mesh::Mesh(std::vector<std::vector<std::vector<float>>> pointsArr)
 
 Mesh::Mesh(std::vector<float> points)
 {
-	int step = 6;
+	step = 6;
 	pointCount = points.size();
 	VBO = 0;
 	glGenBuffers(1, &VBO); // generate the VBO
@@ -56,5 +56,5 @@ Mesh::Mesh(std::vector<float> points)
 void Mesh::draw()
 {
 	glBindVertexArray(VAO);
-	glDrawArrays(GL_TRIANGLES, 0, pointCount);
+	glDrawArrays(GL_TRIANGLES, 0, pointCount / step);
 }

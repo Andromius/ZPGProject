@@ -17,8 +17,12 @@ private:
 	std::vector<std::shared_ptr<DrawableObject>> _objects;
 	std::shared_ptr<DrawableObject> _skybox;
 	std::vector<std::shared_ptr<Light>> _lights;
+	glm::vec4 _ambientColorFactor = glm::vec4(0.1f, 0.1f, 0.1f, 1);
+	bool canAddObject = false;
+	bool canRemoveObject = false;
 
 	int getLightIndex(void* ptr);
+	int getObjectIndex(DrawableObject* object);
 
 public:
 	Scene(std::shared_ptr<Window> window);
@@ -29,8 +33,11 @@ public:
 	std::vector<std::shared_ptr<Light>> getLights();
 	void draw();
 	void setSkybox(std::shared_ptr<DrawableObject> skybox);
+	void setAmbientColorFactor(glm::vec4 ambientColorFactor);
+	glm::vec4 getAmbientColorFactor();
 	
 	void onKey(GLFWwindow* window) override;
+	void onMouseButton(GLFWwindow* window) override;
 
 	void onLightColorChanged(glm::vec4 color, void* ptr) override;
 	void onLightPositionChanged(glm::vec3 position, void* ptr) override;

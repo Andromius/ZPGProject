@@ -2,7 +2,7 @@
 
 SkyboxMesh::SkyboxMesh(std::vector<float> points)
 {
-	int step = 3;
+	step = 3;
 	pointCount = points.size();
 	VBO = 0;
 	glGenBuffers(1, &VBO); // generate the VBO

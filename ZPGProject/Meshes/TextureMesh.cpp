@@ -2,7 +2,7 @@
 
 TextureMesh::TextureMesh(std::vector<float> points)
 {
-	int step = 8;
+	step = 8;
 	pointCount = points.size();
 	VBO = 0;
 	glGenBuffers(1, &VBO); // generate the VBO

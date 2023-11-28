@@ -7,10 +7,17 @@
 
 in vec3 worldPosition;
 in vec3 worldNormal;
+in vec2 vt_out;
+
 uniform vec3 cameraPosition;
 uniform vec4 objectColor;
 uniform float specularStrength;
 uniform int shininess;
+uniform int hasTexture;
+uniform vec4 ambientColorFactor;
+
+uniform int samplingConstant;
+uniform sampler2D textureUnitID;
 
 uniform int numberOfLights;
 
@@ -54,8 +61,18 @@ void main ( void )
 		
 		float diff = max(dot(lightDirection, worldNormal), 0.0);
 		
-		vec4 diffuseColor = lights[i].diffuseStrength * diff * (lights[i].color + objectColor);
-		vec4 ambientColor = vec4( 0.1, 0.1, 0.1, 1.0) * objectColor;
+		vec4 diffuseColor;
+		vec4 ambientColor;
+		if (hasTexture != 1)
+		{
+			diffuseColor = lights[i].diffuseStrength * diff * ((lights[i].color + objectColor)/2);
+			ambientColor = ambientColorFactor * objectColor;
+		}
+		else
+		{
+			diffuseColor = lights[i].diffuseStrength * diff * ((lights[i].color + texture(textureUnitID, vt_out * samplingConstant))/2);
+			ambientColor = ambientColorFactor * texture(textureUnitID, vt_out * samplingConstant );
+		}
 		
 		float attenuation = 1;
 		if (lightType != LIGHT_DIRECTIONAL)

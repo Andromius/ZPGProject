@@ -19,6 +19,7 @@
 #include <Meshes/TextureMesh.h>
 #include <Meshes/SkyboxMesh.h>
 #include <Drawables/SkyboxTexture.h>
+#include <Meshes/MeshImporter.h>
 
 Application& Application::getInstance()
 {
@@ -38,7 +39,7 @@ void Application::initialize()
 	_scenes = std::vector<std::shared_ptr<Scene>>();
 	_meshes = std::map<std::string, std::shared_ptr<Mesh>>();
 	_textures = std::map<std::string, std::shared_ptr<Texture>>();
-	_currentScene = 4;
+	_currentScene = 6;
 
 	glfwSetErrorCallback(onError);
 
@@ -78,6 +79,8 @@ void Application::initialize()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 }
 
@@ -94,7 +97,9 @@ void Application::createShaders()
 	FragmentShader texTestFrag("textureTest");
 	VertexShader skyboxVert("vertexShaderSkybox");
 	FragmentShader skyboxFrag("fragmentShaderSkybox");
+	FragmentShader tomPhong("fragmentShaderTomPhong");
 
+	_shaderPrograms.insert(std::make_pair("phongTomProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, tomPhong)));
 	_shaderPrograms.insert(std::make_pair("phongProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, phong)));
 	_shaderPrograms.insert(std::make_pair("lambertProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, lambert)));
 	_shaderPrograms.insert(std::make_pair("solidProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, solid)));
@@ -103,6 +108,7 @@ void Application::createShaders()
 	_shaderPrograms.insert(std::make_pair("phongNoRingProgram", std::make_shared<ShaderProgram>(_camera, vertexShader, phongNoRing)));
 	_shaderPrograms.insert(std::make_pair("textureTest", std::make_shared<ShaderProgram>(_camera, vertexShader, texTestFrag)));
 	_shaderPrograms.insert(std::make_pair("skybox", std::make_shared<ShaderProgram>(_camera, skyboxVert, skyboxFrag)));
+
 	
 	for (auto& shaderProgram : _shaderPrograms)
 	{
@@ -121,6 +127,15 @@ void Application::createModels()
 	_meshes.insert(std::make_pair("gift", std::make_shared<Mesh>(std::vector<float>(std::begin(gift), std::end(gift)))));
 	_meshes.insert(std::make_pair("texTriangle", std::make_shared<TextureMesh>(std::vector<float>(std::begin(triangle), std::end(triangle)))));
 	_meshes.insert(std::make_pair("skybox", std::make_shared<SkyboxMesh>(std::vector<float>(std::begin(skycube), std::end(skycube)))));
+	_meshes.insert(std::make_pair("importTest", std::make_shared<TextureMesh>(MeshImporter::readFromFile("C:\\Users\\marti\\Downloads\\ukazkaAssimp\\model.obj"))));
+	//_meshes.insert(std::make_pair("JaaG", std::make_shared<TextureMesh>(MeshImporter::readFromFile("C:\\Users\\marti\\Desktop\\ZPG\\ZPGProject\\ZPGProject\\Resources\\jaag\\scene.gltf"))));
+	//_meshes.insert(std::make_pair("Beaowl", std::make_shared<TextureMesh>(MeshImporter::readFromFile("C:\\Users\\marti\\Desktop\\ZPG\\ZPGProject\\ZPGProject\\Resources\\beaowl\\scene.gltf"))));
+	_meshes.insert(std::make_pair("girl", std::make_shared<TextureMesh>(MeshImporter::readFromFile("C:\\Users\\marti\\Desktop\\ZPG\\ZPGProject\\ZPGProject\\Resources\\14-girl-obj\\girl OBJ.obj"))));
+	_meshes.insert(std::make_pair("zombie", std::make_shared<TextureMesh>(MeshImporter::readFromFile("..\\ZPGProject\\Resources\\zombie\\zombie.obj"))));
+	_meshes.insert(std::make_pair("tails", std::make_shared<TextureMesh>(MeshImporter::readFromFile("..\\ZPGProject\\Resources\\tails-64\\source\\tails 64 model.fbx"))));
+	_meshes.insert(std::make_pair("container", std::make_shared<TextureMesh>(MeshImporter::readFromFile("..\\ZPGProject\\Resources\\Container_v1_medium.fbx"))));
+	_meshes.insert(std::make_pair("containerLarge", std::make_shared<TextureMesh>(MeshImporter::readFromFile("..\\ZPGProject\\Resources\\Container_v1_large.fbx"))));
+	_meshes.insert(std::make_pair("cube", std::make_shared<TextureMesh>(MeshImporter::readFromFile("..\\ZPGProject\\Resources\\cube.obj"))));
 }
 
 void Application::createScenes()
@@ -131,6 +146,13 @@ void Application::createScenes()
 	_scenes.push_back(createSceneD());
 	_scenes.push_back(createSceneE());
 	_scenes.push_back(createSceneF());
+	_scenes.push_back(createSceneG());
+	//for (size_t i = 0; i < _scenes.size(); i++)
+	//{
+	//	if (i == _scenes.size() - 1)
+	//		break;
+	//	_scenes[i]->addLight(_cameraLight);
+	//}
 	for (auto& scene : _scenes)
 	{
 		scene->addLight(_cameraLight);
@@ -143,10 +165,11 @@ void Application::createMaterials()
 {
 	_materials.insert(std::make_pair("default", std::make_shared<Material>()));
 	_materials.insert(std::make_pair("redShiny", std::make_shared<Material>(glm::vec4(1, 0, 0, 1))));
-	_materials.insert(std::make_pair("greenShiny", std::make_shared<Material>(glm::vec4(0, 1, 0, 1), 1, 32)));
+	_materials.insert(std::make_pair("greenShiny", std::make_shared<Material>(glm::vec4(0, 1, 0, 1), 1, 1)));
 	_materials.insert(std::make_pair("blueShiny", std::make_shared<Material>(glm::vec4(0, 0, 1, 1))));
 	_materials.insert(std::make_pair("yellowShiny", std::make_shared<Material>(glm::vec4(1, 1, 0, 1))));
 	_materials.insert(std::make_pair("blueShiny32", std::make_shared<Material>(glm::vec4(0, 0, 1, 1), 1, 32)));
+	_materials.insert(std::make_pair("black", std::make_shared<Material>(glm::vec4(0.3, 0.7, 0.2, 1), 0.1f, 1)));
 	
 	_materials.insert(std::make_pair("mercuryGray", std::make_shared<Material>(glm::vec4(0.6627, 0.6627, 0.6627, 1), 1, 32)));
 	_materials.insert(std::make_pair("venusOrange", std::make_shared<Material>(glm::vec4(1.0, 0.6471, 0.0, 1), 1, 32)));
@@ -171,6 +194,16 @@ void Application::loadTextures()
 		"C:\\Users\\marti\\Desktop\\cubemap\\negy.jpg",
 		"C:\\Users\\marti\\Desktop\\cubemap\\posz.jpg",
 		"C:\\Users\\marti\\Desktop\\cubemap\\negz.jpg")));
+	_textures.insert(std::make_pair("nightsky", std::make_shared<SkyboxTexture>(
+		"..\\ZPGProject\\Resources\\nightsky\\posx.png",
+		"..\\ZPGProject\\Resources\\nightsky\\negx.png",
+		"..\\ZPGProject\\Resources\\nightsky\\posy.png",
+		"..\\ZPGProject\\Resources\\nightsky\\negy.png",
+		"..\\ZPGProject\\Resources\\nightsky\\posz.png",
+		"..\\ZPGProject\\Resources\\nightsky\\negz.png")));
+	_textures.insert(std::make_pair("houseTexture", std::make_shared<Texture>("C:\\Users\\marti\\Downloads\\ukazkaAssimp\\model.png")));
+	_textures.insert(std::make_pair("zombie", std::make_shared<Texture>("..\\ZPGProject\\Resources\\zombie\\zombie.png")));
+	_textures.insert(std::make_pair("containerLarge", std::make_shared<Texture>("..\\ZPGProject\\Resources\\T_LargeContainerBackUp_Color.png")));
 }
 
 void Application::run()
@@ -187,6 +220,11 @@ Scene& Application::getCurrentScene()
 	return *_scenes[_currentScene];
 }
 
+std::shared_ptr<Camera> Application::getCamera()
+{
+	return _camera;
+}
+
 void Application::onKey(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
@@ -201,6 +239,22 @@ void Application::onError(int error, const char* description)
 {
 	fputs(description, stderr);
 }
+
+std::shared_ptr<DrawableObject> Application::getPresetObject(glm::vec3 translation)
+{
+	std::shared_ptr<DrawableObject> object = std::make_shared<DrawableObject>(_meshes["gift"], _shaderPrograms["phongProgram"], _materials["blueShiny32"]);
+	object->addTransform(std::make_shared<TranslateTransform>(translation));
+	return object;
+}
+
+bool Application::isGift(std::shared_ptr<DrawableObject> candidate)
+{
+	return candidate->equals(_meshes["gift"]);
+}
+
+
+
+#pragma region SceneCreations
 
 std::shared_ptr<Scene> Application::createSceneA()
 {
@@ -244,7 +298,7 @@ std::shared_ptr<Scene> Application::createSceneB()
 	sphereE->addTransform(std::make_shared<TranslateTransform>(glm::vec3(0.0f, 0.0f, 2.5f)));
 	scene->addDrawableObject(sphereE);
 
-	scene->addLight(std::make_shared<PointLight>(glm::vec3(0, 0, 1), glm::vec4(1, 0, 0, 1), 0, 1));
+	scene->addLight(std::make_shared<PointLight>(glm::vec3(0, 0, 1), glm::vec4(0, 0, 0, 1), 0, 1));
 
 	return scene;
 }
@@ -400,12 +454,90 @@ std::shared_ptr<Scene> Application::createSceneE()
 
 	return scene;
 }
+
 std::shared_ptr<Scene> Application::createSceneF()
 {
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>(_window);
-	std::shared_ptr<DrawableObject> textTr = std::make_shared<DrawableObject>(_meshes["texTriangle"], _shaderPrograms["textureTest"], _materials["default"]);
-	textTr->addTransform(std::make_shared<RotationTransform>(90, glm::vec3(1,0,0)));
-	textTr->setTexture(_textures["default"]);
+	
+	std::shared_ptr<DrawableObject> textTr = std::make_shared<DrawableObject>(_meshes["suziSmooth"], _shaderPrograms["phongProgram"], _materials["default"]);
+	textTr->addTransform(std::make_shared<TranslateTransform>(glm::vec3(6, 0, 0)))
+		.addTransform(std::make_shared<RotationTransform>(90, glm::vec3(1, 0, 0)));
 	scene->addDrawableObject(textTr);
+
+	std::shared_ptr<DrawableObject> house = std::make_shared<DrawableObject>(_meshes["importTest"], _shaderPrograms["phongProgram"], _materials["black"]);
+	house->setTexture(_textures["houseTexture"]);
+	scene->addDrawableObject(house);
+
+	std::shared_ptr<DrawableObject> ground = std::make_shared<DrawableObject>(_meshes["texTriangle"], _shaderPrograms["textureTest"], _materials["black"]);
+	ground->addTransform(std::make_shared<TranslateTransform>(glm::vec3(9, 0, 0)));
+	ground->setTexture(_textures["houseTexture"]);
+	scene->addDrawableObject(ground);
+
+	//scene->addLight(std::make_shared<DirectionalLight>(glm::vec3(1, 1, 0), glm::vec4(1), 0.2));
+
 	return scene;
 }
+
+std::shared_ptr<Scene> Application::createSceneG()
+{
+	std::shared_ptr<Scene> scene = std::make_shared<Scene>(_window);
+
+	std::shared_ptr<DrawableObject> house = std::make_shared<DrawableObject>(_meshes["importTest"], _shaderPrograms["phongProgram"], _materials["black"]);
+	house->setTexture(_textures["houseTexture"]);
+	scene->addDrawableObject(house);
+
+	std::shared_ptr<DrawableObject> ground = std::make_shared<DrawableObject>(_meshes["texTriangle"], _shaderPrograms["phongProgram"], _materials["greenShiny"]);
+	ground->addTransform(std::make_shared<ScaleTransform>(glm::vec3{ 50, 1, 50 }));
+	_textures["default"]->setSamplingConstant(100);
+	ground->setTexture(_textures["default"]);
+	scene->addDrawableObject(ground);
+
+	std::shared_ptr<DrawableObject> zombie = std::make_shared<DrawableObject>(_meshes["zombie"], _shaderPrograms["phongProgram"], _materials["black"]);
+	zombie->setTexture(_textures["zombie"]);
+	zombie->addTransform(std::make_shared<TranslateTransform>(glm::vec3(9, 0, 0)));
+	scene->addDrawableObject(zombie);
+
+	std::shared_ptr<DrawableObject> container = std::make_shared<DrawableObject>(_meshes["container"], _shaderPrograms["phongProgram"], _materials["greenShiny"]);
+	container->addTransform(std::make_shared<TranslateTransform>(glm::vec3(15, 0.33, 0)))
+		.addTransform(std::make_shared<RotationTransform>(-90.f, glm::vec3(1,0,0)));
+	scene->addDrawableObject(container);
+
+	std::shared_ptr<DrawableObject> containerL = std::make_shared<DrawableObject>(_meshes["containerLarge"], _shaderPrograms["phongProgram"], _materials["greenShiny"]);
+	containerL->addTransform(std::make_shared<TranslateTransform>(glm::vec3(25, 0, 0)))
+		.addTransform(std::make_shared<RotationTransform>(-90.f, glm::vec3(1, 0, 0)));
+	containerL->setTexture(_textures["containerLarge"]);
+	scene->addDrawableObject(containerL);
+
+	std::shared_ptr<DrawableObject> skybox = std::make_shared<DrawableObject>(_meshes["skybox"], _shaderPrograms["skybox"], _materials["default"]);
+	skybox->setTexture(_textures["nightsky"]);
+	scene->setSkybox(skybox);
+
+	for (size_t i = 0; i < 100; i++)
+	{
+		int x = rand() % 50;
+		int z = rand() % 50;
+		float angle = rand() % 181;
+		float scaleFactor = float(rand()) / RAND_MAX;
+		std::string meshNames[4] = { "tree", "bush", "gift", "zombie" };
+		std::string shaderPrograms[4] = { "phongProgram", "phongNoRingProgram", "blinnProgram", "blinnNoRingProgram" };
+		std::string chosenName = meshNames[rand() % 4];
+		std::string chosenProgram = shaderPrograms[rand() % 4];
+		std::shared_ptr<DrawableObject> obj = std::make_shared<DrawableObject>(_meshes[chosenName], _shaderPrograms[chosenProgram], _materials["greenShiny"]);
+		obj->addTransform(std::make_shared<TranslateTransform>(glm::vec3{ x, 0, z }))
+			.addTransform(std::make_shared<RotationTransform>(angle, glm::vec3(0, 1, 0)))
+			.addTransform(std::make_shared<ScaleTransform>(glm::vec3{ scaleFactor, scaleFactor, scaleFactor }));
+		if (chosenName == "zombie")
+			obj->setTexture(_textures["zombie"]);
+		scene->addDrawableObject(obj);
+	}
+
+	scene->setAmbientColorFactor(glm::vec4(0.02, 0.02, 0.02, 1));
+	scene->addLight(std::make_shared<SpotLight>(30, 25, glm::vec3(15, 1, 0), glm::vec3(1, 0, 0)));
+	scene->addLight(std::make_shared<SpotLight>(10, 5, glm::vec3(10, 1, -4), glm::vec3(-1, 0, 0)));
+	scene->addLight(std::make_shared<PointLight>(glm::vec3(26, 1, 2), glm::vec4(1,1,1,1), 0.05, 1));
+
+	return scene;
+}
+#pragma endregion
+
+

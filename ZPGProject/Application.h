@@ -37,6 +37,7 @@ private:
 	std::shared_ptr<Scene> createSceneD();
 	std::shared_ptr<Scene> createSceneE();
 	std::shared_ptr<Scene> createSceneF();
+	std::shared_ptr<Scene> createSceneG();
 
 public:
 	static Application& getInstance();
@@ -49,6 +50,9 @@ public:
 	void loadTextures();
 	void run();
 	Scene& getCurrentScene();
+	std::shared_ptr<Camera> getCamera();
+	std::shared_ptr<DrawableObject> getPresetObject(glm::vec3 translation);
+	bool isGift(std::shared_ptr<DrawableObject> candidate);
 
 	void onKey(GLFWwindow* window) override;
 };

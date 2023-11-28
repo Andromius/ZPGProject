@@ -29,7 +29,9 @@ void DrawableObject::draw()
 	{
 		_texture->bind();
 		_program->setTexture(*_texture);
+		_program->setVariable(1, "hasTexture");
 	}
+	else _program->setVariable(0, "hasTexture");
 	_mesh->draw();
 	ShaderProgram::resetProgram();
 }
@@ -37,4 +39,19 @@ void DrawableObject::draw()
 glm::mat4 DrawableObject::getModelMatrix()
 {
 	return _transform->transform();
+}
+
+int DrawableObject::getId()
+{
+	return _id;
+}
+
+void DrawableObject::setId(int newId)
+{
+	_id = newId;
+}
+
+bool DrawableObject::equals(std::shared_ptr<Mesh> comparison)
+{
+	return _mesh.get() == comparison.get();
 }

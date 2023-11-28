@@ -10,6 +10,13 @@ int Scene::getLightIndex(void* ptr)
         std::find_if(_lights.begin(), _lights.end(), [&](std::shared_ptr<Light> l) { return l.get() == ptr; }));
 }
 
+int Scene::getObjectIndex(DrawableObject* object)
+{
+    int objId = std::distance(_objects.begin(),
+        std::find_if(_objects.begin(), _objects.end(), [&](std::shared_ptr<DrawableObject> o) { return o.get() == object; }));
+    return objId > 255 ? 255 : objId;
+}
+
 Scene::Scene(std::shared_ptr<Window> window)
 {
 	_objects = std::vector<std::shared_ptr<DrawableObject>>();
@@ -41,12 +48,14 @@ std::vector<std::shared_ptr<Light>> Scene::getLights()
 
 void Scene::draw()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     if(_skybox)
         _skybox->draw();
     glClear(GL_DEPTH_BUFFER_BIT);
 	for (auto& object : _objects)
 	{
+        object->setId(getObjectIndex(object.get()));
+        glStencilFunc(GL_ALWAYS, object->getId(), 0xFF);
 		object->draw();
 	}
 }
@@ -56,9 +65,33 @@ void Scene::setSkybox(std::shared_ptr<DrawableObject> skybox)
     _skybox = skybox;
 }
 
+void Scene::setAmbientColorFactor(glm::vec4 ambientColorFactor)
+{
+    _ambientColorFactor = ambientColorFactor;
+}
+
+glm::vec4 Scene::getAmbientColorFactor()
+{
+    return _ambientColorFactor;
+}
+
 void Scene::onKey(GLFWwindow* window)
 {
     if (this != &Application::getInstance().getCurrentScene()) return;
+
+    if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
+    {
+        canAddObject = !canAddObject;
+        canRemoveObject = false;
+        printf("%d canAddObject\n", canAddObject);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
+    {
+        canRemoveObject = !canRemoveObject;
+        canAddObject = false;
+        printf("%d canRemoveObject\n", canRemoveObject);
+    }
 
     if (glfwGetKey(window, GLFW_KEY_RIGHT_BRACKET) == GLFW_PRESS) {
         if (selectedObjectIndex < _objects.size() - 1)
@@ -167,6 +200,52 @@ void Scene::onKey(GLFWwindow* window)
             pos.z -= 0.5;
             light->setPosition(pos);
         }
+    }
+}
+
+void Scene::onMouseButton(GLFWwindow* window)
+{
+    if (this != &Application::getInstance().getCurrentScene()) return;
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
+    {
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        ScreenDimensions dimensions = _window->getDimensions();
+        ypos = dimensions.height - (int)ypos;
+
+        GLbyte color[4];
+        GLfloat depth;
+        GLuint index;
+        glReadPixels((int)xpos, (int)ypos, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
+        glReadPixels((int)xpos, (int)ypos, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+        glReadPixels((int)xpos, (int)ypos, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
+        
+        printf("Clicked on pixel %d, %d, color %02hhx%02hhx%02hhx%02hhx, depth% f, stencil index % u\n", 
+            (int)xpos, (int)ypos, color[0], color[1], color[2], color[3], depth, index);
+        
+        std::shared_ptr<Camera> cam = Application::getInstance().getCamera();
+        glm::vec3 screenX = glm::vec3(xpos, ypos, depth);
+        glm::mat4 view = cam->getViewMatrix();
+        glm::mat4 projection = cam->getProjectionMatrix();
+        glm::vec4 viewPort = glm::vec4(0, 0, dimensions.width, dimensions.height);
+        glm::vec3 pos = glm::unProject(screenX, view, projection, viewPort);
+
+        if (canAddObject)
+        {
+            this->addDrawableObject(Application::getInstance().getPresetObject(pos));
+        }
+
+        if (canRemoveObject)
+        {
+            if (Application::getInstance().isGift(_objects[index]))
+            {
+                _objects.erase(_objects.begin() + index);
+                printf("IT WAS A GIFT!\n");
+            }
+        }
+
+        printf("WorldPos %f %f %f\n", pos.x, pos.y, pos.z);
     }
 }
 
