@@ -1,9 +1,10 @@
 #include "PointLight.h"
 
-PointLight::PointLight(glm::vec3 position, glm::vec4 color, float attenuation, float diffuseStrength) : Light(color, diffuseStrength)
+PointLight::PointLight(glm::vec3 position, glm::vec4 color, float attenuationLinear, float attenuationQuadratic, float diffuseStrength) : Light(color, diffuseStrength)
 {
 	_position = position;
-	_attenuation = attenuation;
+	_attenuationQuadratic = attenuationQuadratic;
+	_attenuationLinear = attenuationLinear;
 }
 
 glm::vec3 PointLight::getPosition()
@@ -17,7 +18,12 @@ void PointLight::setPosition(glm::vec3 position)
 	notify(&LightEventHandler::onLightPositionChanged, _position, static_cast<void*>(this));
 }
 
-float PointLight::getAttenuation()
+float PointLight::getAttenuationQuadratic()
 {
-	return _attenuation;
+	return _attenuationQuadratic;
+}
+
+float PointLight::getAttenuationLinear()
+{
+	return _attenuationLinear;
 }

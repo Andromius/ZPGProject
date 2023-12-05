@@ -55,3 +55,8 @@ bool DrawableObject::equals(std::shared_ptr<Mesh> comparison)
 {
 	return _mesh.get() == comparison.get();
 }
+
+CompositeTransform* DrawableObject::getComposite()
+{
+	return _transform.get();
+}

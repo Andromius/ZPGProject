@@ -153,6 +153,15 @@
     <ClCompile Include="Meshes\MeshImporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Transforms\ContinuousLineTransform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Transforms\ContinuousBezierTransform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -296,6 +305,15 @@
     <ClInclude Include="Meshes\MeshImporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Transforms\ContinuousLineTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Transforms\ContinuousBezierTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Definitions\vertexShader.vert" />
@@ -310,5 +328,6 @@
     <None Include="Shaders\Definitions\textureTest.vert" />
     <None Include="Shaders\Definitions\vertexShaderSkybox.vert" />
     <None Include="Shaders\Definitions\fragmentShaderSkybox.frag" />
+    <None Include="Shaders\Definitions\fragmentShaderSkyDome.frag" />
   </ItemGroup>
 </Project>

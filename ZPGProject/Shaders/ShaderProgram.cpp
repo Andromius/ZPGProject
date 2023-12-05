@@ -126,7 +126,8 @@ void ShaderProgram::setLightVariables(std::shared_ptr<Light> light, int i)
 	if (pLight)
 	{
 		setVariable(pLight->getPosition(), "lights[" + std::to_string(i) + "].position");
-		setVariable(pLight->getAttenuation(), "lights[" + std::to_string(i) + "].attenuation");
+		setVariable(pLight->getAttenuationQuadratic(), "lights[" + std::to_string(i) + "].attenuationQuadratic");
+		setVariable(pLight->getAttenuationLinear(), "lights[" + std::to_string(i) + "].attenuationLinear");
 		std::shared_ptr<SpotLight> sLight = std::dynamic_pointer_cast<SpotLight>(pLight);
 		if (sLight)
 		{

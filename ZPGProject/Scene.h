@@ -20,9 +20,12 @@ private:
 	glm::vec4 _ambientColorFactor = glm::vec4(0.1f, 0.1f, 0.1f, 1);
 	bool canAddObject = false;
 	bool canRemoveObject = false;
+	bool canAssignDirection = false;
+	std::vector<glm::vec3> _pointsCache;
 
 	int getLightIndex(void* ptr);
 	int getObjectIndex(DrawableObject* object);
+	glm::vec3 getWorldSpaceCoordsOnCursorPos(ScreenDimensions& dimensions, double xpos, double ypos, float depth);
 
 public:
 	Scene(std::shared_ptr<Window> window);

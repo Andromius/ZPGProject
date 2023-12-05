@@ -1,4 +1,5 @@
 #include "CompositeTransform.h"
+#include "ContinuousBezierTransform.h"
 
 CompositeTransform::~CompositeTransform()
 {
@@ -11,6 +12,20 @@ glm::mat4 CompositeTransform::transform()
 	for (auto& transform : _transforms)
 	{
 		matrix *= transform->transform();
+	}
+	return matrix;
+}
+
+glm::mat4 CompositeTransform::transformUntil(int index)
+{
+	matrix = glm::mat4(1.f);
+	for (size_t i = 0; i < index; i++)
+	{
+		if (i >= _transforms.size())
+		{
+			return matrix;
+		}
+		matrix *= _transforms[i]->transform();
 	}
 	return matrix;
 }
@@ -45,4 +60,15 @@ CompositeTransform& CompositeTransform::addTranslateTransform(glm::vec3 vector)
 {
 	_transforms.push_back(std::make_shared<TranslateTransform>(vector));
 	return *this;
+}
+
+CompositeTransform& CompositeTransform::addContinuousBezierTransform(float delta, float start)
+{
+	_transforms.push_back(std::make_shared<ContinuousBezierTransform>(delta, start));
+	return *this;
+}
+
+Transform* CompositeTransform::getTransform(int index)
+{
+	return index < _transforms.size() ? _transforms[index].get() : nullptr;
 }

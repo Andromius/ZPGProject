@@ -153,6 +153,8 @@
     <ClCompile Include="Shaders\FragmentShader.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Meshes\Mesh.cpp" />
+    <ClCompile Include="Transforms\ContinuousBezierTransform.cpp" />
+    <ClCompile Include="Transforms\ContinuousLineTransform.cpp" />
     <ClCompile Include="Transforms\ContinuousRotationTransform.cpp" />
     <ClCompile Include="Transforms\GeneralAxisRotationTransform.cpp" />
     <ClCompile Include="Transforms\RotationTransform.cpp" />
@@ -163,6 +165,7 @@
     <ClCompile Include="Transforms\Transform.cpp" />
     <ClCompile Include="Transforms\TranslateTransform.cpp" />
     <ClCompile Include="Shaders\VertexShader.cpp" />
+    <ClCompile Include="Util.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -201,6 +204,8 @@
     <ClInclude Include="Drawables\DrawableObject.h" />
     <ClInclude Include="Shaders\FragmentShader.h" />
     <ClInclude Include="Meshes\Mesh.h" />
+    <ClInclude Include="Transforms\ContinuousBezierTransform.h" />
+    <ClInclude Include="Transforms\ContinuousLineTransform.h" />
     <ClInclude Include="Transforms\ContinuousRotationTransform.h" />
     <ClInclude Include="Transforms\GeneralAxisRotationTransform.h" />
     <ClInclude Include="Transforms\RotationTransform.h" />
@@ -212,6 +217,7 @@
     <ClInclude Include="Transforms\Transform.h" />
     <ClInclude Include="Transforms\TranslateTransform.h" />
     <ClInclude Include="Shaders\VertexShader.h" />
+    <ClInclude Include="Util.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -222,6 +228,7 @@
     <None Include="Shaders\Definitions\fragmentShaderPhong.frag" />
     <None Include="Shaders\Definitions\fragmentShaderPhongNoRing.frag" />
     <None Include="Shaders\Definitions\fragmentShaderSkybox.frag" />
+    <None Include="Shaders\Definitions\fragmentShaderSkyDome.frag" />
     <None Include="Shaders\Definitions\fragmentShaderSolid.frag" />
     <None Include="Shaders\Definitions\textureTest.frag" />
     <None Include="Shaders\Definitions\textureTest.vert" />

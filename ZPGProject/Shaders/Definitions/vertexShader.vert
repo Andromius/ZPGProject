@@ -13,7 +13,7 @@ out vec2 vt_out;
 void main ( void ) {
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4 (vp, 1.0);
 	vec4 worldPositionVec4 = modelMatrix * vec4(vp, 1.0f);
-	worldPosition = vec3(worldPositionVec4);
+	worldPosition = vec3(worldPositionVec4 / worldPositionVec4.w);
     worldNormal = normalize(transpose(inverse(mat3(modelMatrix))) * vn);
 	vt_out = vt;
 }

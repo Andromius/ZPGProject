@@ -25,7 +25,8 @@ struct light
 {
 	vec3 position;
 	vec4 color;
-	float attenuation;
+	float attenuationQuadratic;
+	float attenuationLinear;
 	float diffuseStrength;
 	vec3 direction;
 	int type;
@@ -78,7 +79,7 @@ void main ( void )
 		if (lightType != LIGHT_DIRECTIONAL)
 		{
 			float distance = length(lights[i].position - worldPosition);
-			attenuation = 1.0 / (1.0 + lights[i].attenuation * distance * distance);
+			attenuation = 1.0 / (1.0 + lights[i].attenuationLinear * distance + lights[i].attenuationQuadratic * distance * distance);
 		}
 
 		if (lightType == LIGHT_SPOT) 

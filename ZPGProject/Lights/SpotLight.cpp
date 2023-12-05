@@ -1,7 +1,9 @@
 #include "SpotLight.h"
 
-SpotLight::SpotLight(float angle, float angleFadeStart, glm::vec3 position, glm::vec3 direction, glm::vec4 color, float attenuation, float diffuseStrength)
-	: PointLight(position, color, attenuation, diffuseStrength)
+SpotLight::SpotLight(float angle, float angleFadeStart,
+	glm::vec3 position, glm::vec3 direction, glm::vec4 color,
+	float attenuationLinear, float attenuationQuadratic, float diffuseStrength)
+	: PointLight(position, color, attenuationLinear, attenuationQuadratic, diffuseStrength)
 {
 	_direction = direction;
 	_angle = angle;

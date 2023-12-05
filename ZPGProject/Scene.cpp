@@ -3,6 +3,7 @@
 #include "Transforms/ScaleTransform.h"
 #include "Application.h"
 #include <Lights/PointLight.h>
+#include <Transforms/ContinuousBezierTransform.h>
 
 int Scene::getLightIndex(void* ptr)
 {
@@ -15,6 +16,16 @@ int Scene::getObjectIndex(DrawableObject* object)
     int objId = std::distance(_objects.begin(),
         std::find_if(_objects.begin(), _objects.end(), [&](std::shared_ptr<DrawableObject> o) { return o.get() == object; }));
     return objId > 255 ? 255 : objId;
+}
+
+glm::vec3 Scene::getWorldSpaceCoordsOnCursorPos(ScreenDimensions& dimensions, double xpos, double ypos, float depth)
+{
+    std::shared_ptr<Camera> cam = Application::getInstance().getCamera();
+    glm::vec3 screenX = glm::vec3(xpos, ypos, depth);
+    glm::mat4 view = cam->getViewMatrix();
+    glm::mat4 projection = cam->getProjectionMatrix();
+    glm::vec4 viewPort = glm::vec4(0, 0, dimensions.width, dimensions.height);
+    return glm::unProject(screenX, view, projection, viewPort);
 }
 
 Scene::Scene(std::shared_ptr<Window> window)
@@ -83,6 +94,7 @@ void Scene::onKey(GLFWwindow* window)
     {
         canAddObject = !canAddObject;
         canRemoveObject = false;
+        canAssignDirection = false;
         printf("%d canAddObject\n", canAddObject);
     }
 
@@ -90,7 +102,16 @@ void Scene::onKey(GLFWwindow* window)
     {
         canRemoveObject = !canRemoveObject;
         canAddObject = false;
+        canAssignDirection = false;
         printf("%d canRemoveObject\n", canRemoveObject);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+    {
+        canAssignDirection = !canAssignDirection;
+        canRemoveObject = false;
+        canAddObject = false;
+        printf("%d canAssignDirection\n", canAssignDirection);
     }
 
     if (glfwGetKey(window, GLFW_KEY_RIGHT_BRACKET) == GLFW_PRESS) {
@@ -224,12 +245,52 @@ void Scene::onMouseButton(GLFWwindow* window)
         printf("Clicked on pixel %d, %d, color %02hhx%02hhx%02hhx%02hhx, depth% f, stencil index % u\n", 
             (int)xpos, (int)ypos, color[0], color[1], color[2], color[3], depth, index);
         
-        std::shared_ptr<Camera> cam = Application::getInstance().getCamera();
-        glm::vec3 screenX = glm::vec3(xpos, ypos, depth);
-        glm::mat4 view = cam->getViewMatrix();
-        glm::mat4 projection = cam->getProjectionMatrix();
-        glm::vec4 viewPort = glm::vec4(0, 0, dimensions.width, dimensions.height);
-        glm::vec3 pos = glm::unProject(screenX, view, projection, viewPort);
+        glm::vec3 pos = getWorldSpaceCoordsOnCursorPos(dimensions, xpos, ypos, depth);
+        if (!canAssignDirection)
+        {
+            selectedObjectIndex = index;
+            _pointsCache.clear();
+        }
+
+        if (canAssignDirection)
+        {
+            int i = 0;
+            CompositeTransform* ct = _objects[selectedObjectIndex]->getComposite();
+            while (true)
+            {
+                Transform* tr = ct->getTransform(i);
+                if (!tr)
+                {
+                    _pointsCache.push_back(pos);
+                    ct->addContinuousBezierTransform(0.01, 0);
+                    break;
+                }
+                
+                ContinuousBezierTransform* cbt = dynamic_cast<ContinuousBezierTransform*>(tr);
+                if (!cbt)
+                {
+                    i++;
+                    continue;
+                }
+                
+                _pointsCache.push_back(pos);
+                if (_pointsCache.size() == 2 && cbt->hasFirstCurve())
+                {
+                    glm::mat4 mat = ct->transformUntil(i);
+                    glm::vec3 tlVec = glm::vec3(mat[3] / mat[3].w);
+                    cbt->addPoint(_pointsCache[0] - tlVec, _pointsCache[1] - tlVec);
+                    _pointsCache.clear();
+                }
+                else if (_pointsCache.size() == 4 && !cbt->hasFirstCurve())
+                {
+                    glm::mat4 mat = ct->transformUntil(i);
+                    glm::vec3 tlVec = glm::vec3(mat[3] / mat[3].w);
+                    cbt->addPoints(glm::mat4x3(_pointsCache[0] - tlVec, _pointsCache[1] - tlVec, _pointsCache[2] - tlVec, _pointsCache[3] - tlVec));
+                    _pointsCache.clear();
+                }
+                break;
+            }
+        }
 
         if (canAddObject)
         {
@@ -241,6 +302,7 @@ void Scene::onMouseButton(GLFWwindow* window)
             if (Application::getInstance().isGift(_objects[index]))
             {
                 _objects.erase(_objects.begin() + index);
+                selectedObjectIndex--;
                 printf("IT WAS A GIFT!\n");
             }
         }

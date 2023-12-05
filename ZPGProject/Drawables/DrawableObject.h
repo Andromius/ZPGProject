@@ -25,5 +25,6 @@ public:
 	int getId();
 	void setId(int newId);
 	bool equals(std::shared_ptr<Mesh> comparison);
+	CompositeTransform* getComposite();
 };
 

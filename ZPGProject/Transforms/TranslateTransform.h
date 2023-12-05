@@ -3,7 +3,7 @@
 class TranslateTransform : 
 	public Transform
 {
-private:
+protected:
 	glm::vec3 _translateVector;
 
 public:
